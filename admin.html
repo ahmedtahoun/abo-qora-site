@@ -190,6 +190,7 @@ const ROLES={
   rider:{ar:'طيار',ic:'🛵',nav:['orders'],d:'يشوف الطلبات اللي معاه بس، ويقفلها لما توصل'}};
 const OWNER={id:'owner',name:'المالك',role:'manager',color:'#5B2614'};
 const COLORS=['#D3202A','#2E8FA3','#4E8A3A','#C98A55','#7A3B22','#8E44AD','#E67E22'];
+const normPhone=v=>{let d=String(v||'').replace(/[\u0660-\u0669]/g,c=>c.charCodeAt(0)-0x660).replace(/[\u06F0-\u06F9]/g,c=>c.charCodeAt(0)-0x6F0).replace(/\D/g,'');if(d.startsWith('0020'))d=d.slice(4);else if(d.startsWith('20')&&d.length===12)d=d.slice(2);if(d.length===10&&d[0]==='1')d='0'+d;return d};
 function seedTeam(){return[
   {id:'t1',name:'سارة',phone:'01011112222',role:'cs',pin:'1111',active:true,color:COLORS[1]},
   {id:'t2',name:'عم حسن',phone:'01011113333',role:'kitchen',pin:'2222',active:true,color:COLORS[3]},
@@ -563,7 +564,7 @@ function viewWA(){
     <ul style="margin:0;padding-inline-start:18px;line-height:1.8"><li>رقم واتساب بيزنس مخصص للمطعم + حساب Meta Business متوثّق</li><li>قوالب رسايل (Templates) لازم Meta توافق عليها: «طلب جديد»، «تأكيد الطلب»، «تحديث الطلب»</li><li>العميل بيوافق على استقبال الرسايل وقت التسجيل</li><li>تكلفة بسيطة على كل محادثة حسب أسعار Meta لمصر</li></ul></div></div></div>`);
   $('#wt').onclick=e=>{const b=e.target.closest('[data-k]');if(b){waTab=b.dataset.k;render()}};
   $$('[data-wk]').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
-  $('#wsave').onclick=()=>{const n=$('#wn').value.trim();if(!/^01[0125]\d{8}$/.test(n))return toast('اكتب رقم موبايل مصري صحيح');
+  $('#wsave').onclick=()=>{const n=normPhone($('#wn').value);if(!/^01[0125]\d{8}$/.test(n))return toast('اكتب رقم موبايل مصري صحيح');
     mutA(a=>{a.wa={restaurant:n,...Object.fromEntries($$('[data-wk]').map(b=>[b.dataset.wk,b.classList.contains('on')]))}});toast('✓ اتحفظ')};
   $$('[data-cp]').forEach(b=>b.onclick=async()=>{const m=loadWA().find(x=>x.id===b.dataset.cp);try{await navigator.clipboard.writeText(m.text);toast('اتنسخت ✓')}catch(e){toast('مقدرتش أنسخ')}});
 }
@@ -631,7 +632,7 @@ function viewTasks(){
     <div class="row"><div class="f"><label>رقم العميل</label><input id="mp" dir="ltr" inputmode="numeric" placeholder="01xxxxxxxxx"></div><div class="f"><label>الاسم (لو مش متسجل)</label><input id="mn"></div></div>
     <div class="f"><label>تفاصيل</label><textarea id="mw" rows="2"></textarea></div><div class="f"><label>مسؤول عنها</label><select id="ma">${`<option value="">—</option>`+cs.map(m=>`<option value="${m.id}" ${m.id===me.id?'selected':''}>${esc(m.name)}</option>`).join('')}</select></div>
     <div id="me_" style="color:var(--red);font-size:13px;min-height:18px;font-weight:800"></div><button class="btn btn-red" id="msv">احفظ</button>`);
-    $('#msv').onclick=()=>{const t=$('#mt').value.trim(),p=$('#mp').value.trim();if(!t)return $('#me_').textContent='اكتب عنوان';if(p&&!/^01[0125]\d{8}$/.test(p))return $('#me_').textContent='الرقم مش صحيح';
+    $('#msv').onclick=()=>{const t=$('#mt').value.trim(),p=normPhone($('#mp').value);if(!t)return $('#me_').textContent='اكتب عنوان';if(p&&!/^01[0125]\d{8}$/.test(p))return $('#me_').textContent='الرقم مش صحيح';
       const id='man:'+Date.now().toString(36);mutA(a=>{a.tasksManual=a.tasksManual||[];a.tasksManual.unshift({id,title:clean(t),why:clean($('#mw').value),phone:p,name:$('#mn').value.trim()||S.users?.[p]?.name||'',at:Date.now()});a.taskState=a.taskState||{};a.taskState[id]={status:'open',notes:[],assignee:$('#ma').value||null}});logAct('task-new',id,t);closeModal();toast('✓ اتضافت')}};
 }
 
@@ -679,7 +680,7 @@ function editMember(id){
    $$('[data-c]').forEach(b=>b.onclick=()=>{keep();d.color=b.dataset.c;draw()});
    $('#mdel')&&($('#mdel').onclick=()=>{if(!confirm(`تشيل ${cur.name} من الفريق؟ مش هيقدر يدخل تاني.`))return;mutA(a=>{a.team=a.team.filter(x=>x.id!==id)});closeModal();toast('اتشال')});
    $('#msv').onclick=async()=>{keep();const e=$('#mer'),pin=$('#mpin').value.trim();
-     if(d.name.trim().length<2)return e.textContent='اكتب الاسم';if(d.phone&&!/^01[0125]\d{8}$/.test(d.phone))return e.textContent='الموبايل مش صحيح';
+     if(d.name.trim().length<2)return e.textContent='اكتب الاسم';if(d.phone)d.phone=normPhone(d.phone);if(d.phone&&!/^01[0125]\d{8}$/.test(d.phone))return e.textContent='الموبايل مش صحيح';
      if((!cur||pin)&&!/^\d{4,6}$/.test(pin))return e.textContent='الكود لازم 4 لـ 6 أرقام';
      const ph=pin?await hashPw('pin:'+pin):null;if(ph&&team().some(m=>m.id!==id&&m.pinHash===ph))return e.textContent='الكود ده مستخدم — اختار كود تاني';
      mutA(a=>{if(cur){const m=a.team.find(x=>x.id===id);Object.assign(m,{name:clean(d.name),phone:d.phone.trim(),role:d.role,color:d.color});if(ph)m.pinHash=ph}

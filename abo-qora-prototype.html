@@ -744,6 +744,10 @@ async function hashPw(p){
   try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('aq:'+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
   catch(e){let h=0;for(const c of 'aq:'+p)h=(h*31+c.charCodeAt(0))|0;return'x'+h}
 }
+/* phones: accept Arabic digits (٠١٢), spaces/dashes and +20 / 0020 prefixes */
+const normPhone=v=>{let d=String(v||'').replace(/[\u0660-\u0669]/g,c=>c.charCodeAt(0)-0x660).replace(/[\u06F0-\u06F9]/g,c=>c.charCodeAt(0)-0x6F0).replace(/\D/g,'');if(d.startsWith('0020'))d=d.slice(4);else if(d.startsWith('20')&&d.length===12)d=d.slice(2);if(d.length===10&&d[0]==='1')d='0'+d;return d};
+const phoneOk=p=>/^01[0125]\d{8}$/.test(p);
+const demoPhone=()=>{let p;do{p='010'+String(Math.floor(Math.random()*1e8)).padStart(8,'0')}while(S.users[p]);return p};
 const pwField=(id,label,ph='')=>`<div class="field"><label for="${id}">${label}</label><div class="pw"><input id="${id}" type="password" placeholder="${ph}" autocomplete="${id==='pw'?'current-password':'new-password'}"><button type="button" class="eye" data-eye="${id}" aria-label="show">👁️</button></div></div>`;
 const bindEyes=()=>$$('[data-eye]').forEach(b=>b.onclick=()=>{const i=$('#'+b.dataset.eye);i.type=i.type==='password'?'text':'password'});
 const H2=t=>`<h2 style="font-size:32px;color:var(--brown)">${t}</h2>`;
@@ -751,12 +755,14 @@ function openLogin(next){
   const welcome=(u,msg)=>{S.session=u.phone;save();closeSheet();toast(msg);refresh();next&&next()};
   const phoneStep=(pre='')=>{
     openSheet(`${H2(tr('أهلاً بيك في أبو قورة 👋','Welcome to Abo Qora 👋'))}<p class="muted" style="margin:4px 0 18px">${tr('اكتب رقم موبايلك — لو ليك حساب هتدخل بكلمة السر، ولو جديد هنعملك حساب في دقيقة.','Enter your mobile — returning customers log in with a password, new ones sign up in a minute.')}</p>
-      <div class="field"><label for="ph">${tr('رقم الموبايل','Mobile number')}</label><input id="ph" inputmode="numeric" maxlength="11" placeholder="01xxxxxxxxx" dir="ltr" autocomplete="tel" value="${esc(pre)}" style="font-size:18px;letter-spacing:1px"></div>
-      <div id="authErr" style="color:var(--red);font-size:13px;min-height:18px;font-weight:700"></div><button class="btn btn-red" style="width:100%" id="phGo">${tr('كمّل','Continue')}</button>`);
+      <div class="field"><label for="ph">${tr('رقم الموبايل','Mobile number')}</label><input id="ph" inputmode="tel" maxlength="17" placeholder="01xxxxxxxxx" dir="ltr" autocomplete="tel" value="${esc(pre)}" style="font-size:18px;letter-spacing:1px"></div>
+      <div id="authErr" style="color:var(--red);font-size:13px;min-height:18px;font-weight:700"></div><button class="btn btn-red" style="width:100%" id="phGo">${tr('كمّل','Continue')}</button>
+      <div style="margin-top:14px;padding:10px 12px;border:1.5px dashed var(--gold);border-radius:12px;font-size:13px;text-align:center" class="muted">🧪 ${tr('نسخة تجريبية — مفيش رسايل حقيقية بتتبعت.','Demo version — no real messages are sent.')} <button class="link" id="phDemo" type="button">${tr('استخدم رقم تجريبي','Use a demo number')}</button></div>`);
     setTimeout(()=>$('#ph')&&$('#ph').focus(),300);
-    const go=()=>{const p=$('#ph').value.trim();if(!/^01[0125]\d{8}$/.test(p)){$('#authErr').textContent=tr('اكتب رقم مصري صحيح (11 رقم يبدأ بـ 010/011/012/015)','Enter a valid Egyptian number (11 digits, starting 010/011/012/015)');return}
+    const go=()=>{const p=normPhone($('#ph').value);if(!phoneOk(p)){$('#authErr').textContent=tr('اكتب رقم مصري صحيح (11 رقم يبدأ بـ 010/011/012/015)','Enter a valid Egyptian number (11 digits, starting 010/011/012/015)');return}
       S.users[p]?loginStep(p):signupStep(p)};
     $('#phGo').onclick=go;$('#ph').onkeydown=e=>e.key==='Enter'&&go();
+    $('#phDemo').onclick=()=>{$('#ph').value=demoPhone();$('#authErr').textContent='';go()};
   };
   const loginStep=p=>{const u=S.users[p];
     $('#sheet').innerHTML=`${H2(tr('أهلاً تاني يا ','Welcome back, ')+esc(u.name.split(' ')[0])+' 👋')}<p class="muted" style="margin:4px 0 16px"><span dir="ltr">${p}</span> · <button class="link" id="chg">${tr('مش رقمي','Not my number')}</button></p>
@@ -860,7 +866,7 @@ function renderCheckout(){
       <div class="opt ${CO.pay==='card'?'on':''}" data-pay="card"><span class="radio"></span><span class="ic">💳</span><div class="t"><b>${tr('كارت — فيزا / ماستركارد / ميزة','Card — Visa / Mastercard / Meeza')}</b><small>${tr('دفع آمن عن طريق Paymob','Secure payment via Paymob')}</small></div></div>
       ${CO.pay==='card'?`<div class="pay-extra"><div class="secure">🔒 ${tr('هتتحول لصفحة دفع Paymob الآمنة. بيانات الكارت مش بتتسجل عندنا.','You\'ll be sent to Paymob\'s secure page. We never store card details.')}</div></div>`:''}
       <div class="opt ${CO.pay==='wallet'?'on':''}" data-pay="wallet"><span class="radio"></span><span class="ic">📱</span><div class="t"><b>${tr('محفظة إلكترونية','Mobile wallet')}</b><small>${tr('فودافون كاش · اتصالات كاش · أورانج كاش · WE Pay — عن طريق Paymob','Vodafone Cash · Etisalat Cash · Orange Cash · WE Pay — via Paymob')}</small></div></div>
-      ${CO.pay==='wallet'?`<div class="pay-extra"><label class="flabel">${tr('رقم المحفظة','Wallet number')}</label><input id="wal" dir="ltr" inputmode="numeric" maxlength="11" value="${esc(CO.wallet)}"><div class="secure">📲 ${tr('هيوصلك طلب تأكيد على موبايلك تدخل فيه الـ PIN.','You\'ll get a prompt on your phone to enter your PIN.')}</div></div>`:''}
+      ${CO.pay==='wallet'?`<div class="pay-extra"><label class="flabel">${tr('رقم المحفظة','Wallet number')}</label><input id="wal" dir="ltr" inputmode="tel" maxlength="17" value="${esc(CO.wallet)}"><div class="secure">📲 ${tr('هيوصلك طلب تأكيد على موبايلك تدخل فيه الـ PIN.','You\'ll get a prompt on your phone to enter your PIN.')}</div></div>`:''}
       <div class="opt ${CO.pay==='cash'?'on':''}" data-pay="cash"><span class="radio"></span><span class="ic">💵</span><div class="t"><b>${CO.mode==='pickup'?tr('كاش في الفرع','Cash at the branch'):tr('كاش عند الاستلام','Cash on delivery')}</b><small>${tr('ادفع لما الأكل يوصلك','Pay when your food arrives')}</small></div></div>
       ${CO.pay==='cash'&&CO.mode==='delivery'?`<div class="pay-extra"><span class="flabel">${tr('هتدفع بكام؟ عشان الطيار يجهز الباقي','Paying with? So the rider brings change')}</span><div class="cash-chips">${[['exact',tr('المبلغ مظبوط','Exact amount')],...[500,1000,2000,5000].filter(v=>v>T.total).slice(0,2).map(v=>[String(v),money(v)]),['custom',tr('مبلغ تاني','Other')]].map(([k,l])=>`<button class="chip ${CO.cash===k?'on':''}" data-cash="${k}">${l}</button>`).join('')}</div>${CO.cash==='custom'?`<input id="cashC" style="margin-top:8px" inputmode="numeric" value="${esc(CO.cashCustom)}">`:''}${CO.cash!=='exact'&&cashVal>T.total?`<div class="secure">💡 ${tr('الطيار هيجيبلك باقي','The rider will bring change of')} ${money(cashVal-T.total)}</div>`:''}</div>`:''}
     </div>
@@ -916,7 +922,7 @@ function placeOrder(){
   if(CO.time==='later'){const ok=bookableSlots(Date.now(),CFG,leadFor(cartSub())).some(g=>g.slots.includes(CO.slot));if(!ok){$('#coErr').textContent=tr('المعاد ده مبقاش متاح — اختار معاد تاني','That slot is no longer available — pick another');CO.slot=null;renderCheckout();return}}
   const u=me(),err=$('#coErr');
   if(CO.mode==='delivery'&&(!u.addresses.length||!u.defaultAddr)){err.textContent=tr('ضيف عنوان التوصيل الأول','Add a delivery address first');openAddress(null,renderCheckout);return}
-  if(CO.pay==='wallet'&&!/^01[0125]\d{8}$/.test(CO.wallet)){err.textContent=tr('رقم المحفظة مش صحيح','Wallet number is not valid');return}
+  if(CO.pay==='wallet'){CO.wallet=normPhone(CO.wallet)}if(CO.pay==='wallet'&&!phoneOk(CO.wallet)){err.textContent=tr('رقم المحفظة مش صحيح','Wallet number is not valid');return}
   if(CO.pay==='cash'&&CO.cash==='custom'&&!(+CO.cashCustom>=totals().total)){err.textContent=tr('المبلغ لازم يكون أكبر من الإجمالي','Amount must cover the total');return}
   if(CO.pay==='cash'){placing=true;finalize(false);setTimeout(()=>placing=false,800)}else paymob();
 }
