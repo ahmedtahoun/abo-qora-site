@@ -84,7 +84,7 @@ header.top::after{content:'';display:block;height:14px;background:var(--tri) rep
 /* hero */
 .hero{position:relative;padding:40px 0 20px;overflow:hidden}
 .hero .wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center}
-.slogan{-webkit-text-stroke:1.5px var(--brown);paint-order:stroke fill;font-size:clamp(46px,7.4vw,92px);color:var(--cream2);-webkit-text-stroke:0;text-shadow:4px 4px 0 var(--red),8px 8px 0 var(--brown);line-height:1.05}
+.slogan{font-size:clamp(46px,7.4vw,92px);color:var(--red);text-shadow:4px 4px 0 var(--brown);line-height:1.08}
 .slogan span{display:block}
 html[lang=en] .slogan{font-size:clamp(42px,6.4vw,80px)}
 .hero .lead{font-size:18px;color:var(--brown2);max-width:500px;margin:18px 0 22px;font-weight:600}
@@ -383,7 +383,7 @@ footer.site img{width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)}
   .card .foot{width:100%}
   .logo .wm small{display:none}
   .logo .wm{font-size:22px}
-  .slogan{text-shadow:3px 3px 0 var(--red),6px 6px 0 var(--brown)}
+  .slogan{text-shadow:3px 3px 0 var(--brown)}
   .stg{font-size:10px}.stg .c{width:38px;height:38px;font-size:16px}.stages::before,.stages .fillbar{top:17px}
   .menu-nav{top:80px}
 }
@@ -415,7 +415,7 @@ footer.site img{width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)}
         <h1 class="slogan" id="slogan"></h1>
         <p class="lead" data-t="مشويات على الفحم، طواجن في الفخار، وصواني تكفي البلد كلها — بطعم الغيط والفرن البلدي.|Charcoal grills, clay-pot tagines and feast trays big enough for the whole village — with the taste of the countryside."></p>
         <div class="ctas">
-          <button class="btn btn-red" id="startBtn" data-t="املا صينيتك ←|Fill your tray →"></button>
+          <button class="btn btn-red" id="startBtn" data-t="ابدأ طلبك ←|Start your order →"></button>
           <button class="btn btn-ghost" id="feastBtn" data-t="عندك عزومة؟ 🎉|Hosting a feast? 🎉"></button>
         </div>
       </div>
@@ -564,7 +564,7 @@ function fly(fromEl,item,cb){
 
 /* dock + "شبعان" meter */
 function satiety(p){
-  if(p<=0)return[tr('صينيتك فاضية','Your tray is empty'),tr('اختار أكلك وشوف الصينية بتتملى 👀','Add food and watch the tray fill up 👀')];
+  if(p<=0)return[tr('طلبك فاضي','Your order is empty'),tr('اختار أكلك وشوف طلبك بيكبر 👀','Add food and watch your order grow 👀')];
   const n=Math.max(1,Math.round(p));
   const f=tr(`تكفي ~${n} ${n>2&&n<11?'أفراد':'فرد'}`,`Feeds ~${n}`);
   if(p<1)return[tr('تصبيرة 😋','A little snack 😋'),tr('ضيف طبق رئيسي عشان تشبع','Add a main to get full')];
@@ -581,7 +581,7 @@ function renderDock(){
   const p=cartFeeds(),[lbl,sub]=satiety(p),c=cartCount();
   $('#meterLbl').textContent=lbl;$('#meterSub').textContent=c?`${c} ${tr('صنف','items')} · ${sub}`:sub;
   $('#meterBar').style.width=Math.min(100,p/10*100)+'%';$('#dockTotal').textContent=c?money(cartSub()):'';
-  $('#dockGo').disabled=!c;$('#dockGo').textContent=tr('الصينية ←','Tray →');
+  $('#dockGo').disabled=!c;$('#dockGo').textContent=tr('طلبك ←','My order →');
   const d=$('#trayCount');d.hidden=!c;d.textContent=c;
 }
 
@@ -631,7 +631,7 @@ function onCardClick(e){
   const b=e.target.closest('[data-act]');if(!b)return;const card=b.closest('[data-id]'),item=BY[card.dataset.id];if(item.dine||item.out)return;
   const src=card.querySelector('.plate img,.plate .em,.ph img');
   if(b.dataset.act==='fav'){e.stopPropagation();toggleFav(item.id);return}
-  if(b.dataset.act==='quick'||!needsSheet(item)){addToCart(item.id,{},1,src);toast(`${L(item)} ${tr('اتحط في الصينية','added to your tray')}`);return}
+  if(b.dataset.act==='quick'||!needsSheet(item)){addToCart(item.id,{},1,src);toast(`${L(item)} ${tr('اتضاف لطلبك','added to your order')}`);return}
   openItem(item);
 }
 $('#menu').addEventListener('click',onCardClick);
@@ -667,13 +667,13 @@ function openItem(item){
     ${item.add.length?`<div class="field"><span class="flabel">${tr('كمّل طبقك','Complete your plate')}</span>${item.add.map(a=>`<div class="check ${o.add.includes(a)?'on':''}" data-a="${a}"><span class="box">${o.add.includes(a)?'✓':''}</span>${L(ADD[a])}<span class="p">+${ADD[a].p}</span></div>`).join('')}</div>`:''}
     <div class="field"><label for="note">${tr('ملاحظة للمطبخ','Note for the kitchen')}</label><input id="note" value="${esc(o.note)}" placeholder="${tr('مثلاً: من غير بصل، مستوي كويس...','e.g. no onions, well done...')}"></div>
     <div style="display:flex;gap:12px;align-items:center;margin-top:16px"><div class="stepper"><button data-q="1">+</button><b>${qty}</b><button data-q="-1">−</button></div>
-      <button class="btn btn-red" style="flex:1" id="addGo">${tr('حطها في الصينية','Add to tray')} · ${money(unit(item,o)*qty)}</button></div>`;
+      <button class="btn btn-red" style="flex:1" id="addGo">${tr('ضيفها لطلبك','Add to order')} · ${money(unit(item,o)*qty)}</button></div>`;
     const keep=()=>o.note=$('#note').value;
     $$('.seg',s).forEach(g=>g.onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;keep();o[g.dataset.g]=b.dataset.v;draw()});
     $$('.check',s).forEach(c=>c.onclick=()=>{keep();const a=c.dataset.a,i=o.add.indexOf(a);i>=0?o.add.splice(i,1):o.add.push(a);draw()});
     $$('[data-q]',s).forEach(b=>b.onclick=()=>{keep();qty=Math.max(1,qty+ +b.dataset.q);draw()});
     $('#addGo').onclick=()=>{o.note=$('#note').value.trim();const r=$('#sheetPic').getBoundingClientRect();const g=document.createElement('span');g.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px`;document.body.appendChild(g);
-      closeSheet();const clean={...o,add:[...o.add]};if(!clean.v)delete clean.v;if(!clean.s)delete clean.s;addToCart(item.id,clean,qty,g);setTimeout(()=>g.remove(),60);toast(`${qty>1?qty+' × ':''}${L(item)} ${tr('اتحط في الصينية','added to your tray')}`)};
+      closeSheet();const clean={...o,add:[...o.add]};if(!clean.v)delete clean.v;if(!clean.s)delete clean.s;addToCart(item.id,clean,qty,g);setTimeout(()=>g.remove(),60);toast(`${qty>1?qty+' × ':''}${L(item)} ${tr('اتضاف لطلبك','added to your order')}`)};
   };
   openSheet('');draw();
 }
@@ -694,8 +694,8 @@ function upsells(){
 }
 function renderDrawer(){
   const d=$('#drawer'),n=cartCount(),sub=cartSub(),di=deliveryInfo(),left=FREE_DELIVERY-sub;
-  const head=`<header><h2 style="font-size:30px;color:var(--brown)">${tr('صينيتك','Your tray')} ${n?`<span class="muted" style="font-size:16px;font-family:Cairo">(${n})</span>`:''}</h2><button class="icon-btn" data-close>✕</button></header>`;
-  if(!n){d.innerHTML=head+`<div class="body" style="display:grid;place-items:center;text-align:center"><div><div class="tray" style="width:130px;height:130px;margin:0 auto 14px"></div><h3 style="font-size:26px;color:var(--brown)">${tr('الصينية لسه فاضية','Your tray is still empty')}</h3><p class="muted">${tr('اختار من المنيو وابدأ املاها.','Pick something from the menu to start.')}</p><button class="btn btn-red" data-close>${tr('يلا نختار','Let\'s pick')}</button></div></div>`;bindClose();return}
+  const head=`<header><h2 style="font-size:30px;color:var(--brown)">${tr('طلبك','Your order')} ${n?`<span class="muted" style="font-size:16px;font-family:Cairo">(${n})</span>`:''}</h2><button class="icon-btn" data-close>✕</button></header>`;
+  if(!n){d.innerHTML=head+`<div class="body" style="display:grid;place-items:center;text-align:center"><div><div class="tray" style="width:130px;height:130px;margin:0 auto 14px"></div><h3 style="font-size:26px;color:var(--brown)">${tr('طلبك لسه فاضي','Your order is still empty')}</h3><p class="muted">${tr('اختار من المنيو وابدأ املاها.','Pick something from the menu to start.')}</p><button class="btn btn-red" data-close>${tr('يلا نختار','Let\'s pick')}</button></div></div>`;bindClose();return}
   const ups=upsells(),[sl,ss]=satiety(cartFeeds());
   d.innerHTML=head+`<div class="body">
     <div class="meter" style="margin-bottom:6px"><div class="lbl"><span>${sl}</span><span class="muted">${ss}</span></div><div class="bar" style="background:var(--line)"><i style="width:${Math.min(100,cartFeeds()/10*100)}%"></i></div></div>
@@ -707,7 +707,7 @@ function renderDrawer(){
     <div class="sumrow"><span class="muted">${tr('التوصيل','Delivery')} ${di.area?'('+areaName(di.area)+')':tr('(تقديري)','(est.)')}</span><span>${left<=0?tr('ببلاش','Free'):money(di.fee)}</span></div>
     <div class="sumrow total"><span>${tr('الإجمالي','Total')}</span><span>${money(sub+(left<=0?0:di.fee))}</span></div>
     <button class="btn btn-red" style="width:100%;margin-top:12px" id="toCheckout">${tr('كمّل الطلب ←','Checkout →')}</button>
-    <button class="btn btn-ghost" style="width:100%;margin-top:10px;padding:9px" id="shareTray">👨‍👩‍👧‍👦 ${tr('ابعت الصينية للعيلة يزوّدوا عليها','Send tray to family to add to it')}</button></footer>`;
+    <button class="btn btn-ghost" style="width:100%;margin-top:10px;padding:9px" id="shareTray">👨‍👩‍👧‍👦 ${tr('ابعت طلبك للعيلة يزوّدوا عليه','Send your order to family to add to it')}</button></footer>`;
   $('#shareTray').onclick=openShare;
   $$('[data-k]',d).forEach(b=>b.onclick=()=>{setQty(b.dataset.k,+b.dataset.d);renderDrawer()});
   $$('[data-up]',d).forEach(b=>b.onclick=()=>{const item=BY[b.dataset.up];addToCart(item.id,item.v?{v:item.v[0].k}:{},1);renderDrawer();toast(L(item)+' ✓')});
@@ -838,7 +838,7 @@ function openAddress(existing,next){
    ========================================================= */
 const CO0=()=>({mode:'delivery',time:'asap',slot:'',pay:null,wallet:'',cash:'exact',cashCustom:'',promo:'',disc:0,riderNote:''});
 let CO=CO0();
-function goCheckout(){if(!cartCount())return toast(tr('الصينية فاضية','Your tray is empty'));if(!me())return openLogin(()=>location.hash='#/checkout');location.hash='#/checkout'}
+function goCheckout(){if(!cartCount())return toast(tr('طلبك فاضي','Your order is empty'));if(!me())return openLogin(()=>location.hash='#/checkout');location.hash='#/checkout'}
 /* ---- opening hours & scheduling (rules live in data.js) ---- */
 const fmtClock=ts=>{const d=new Date(ts);let h=d.getHours(),m=d.getMinutes(),pm=h>=12;h=h%12||12;return`${h}:${String(m).padStart(2,'0')} ${AR()?(pm?'م':'ص'):(pm?'PM':'AM')}`};
 function dayLabel(day){const t=dayStart(Date.now()),k=Math.round((day-t)/86400000);
@@ -855,7 +855,7 @@ function totals(){const sub=cartSub(),di=deliveryInfo(),fee=CO.mode==='pickup'||
   return{sub,fee,disc,pgMax,pgVal,pgUsed,total:sub+fee-disc-pgVal,eta:CO.mode==='pickup'?25+(CFG.busyExtra||0):di.eta}}
 function renderCheckout(){
   const u=me();if(!u){location.hash='#/';return}
-  if(!cartCount()){$('#checkout').innerHTML=`<div class="empty"><div style="font-size:60px">🍽️</div><h2 style="color:var(--brown)">${tr('الصينية فاضية','Your tray is empty')}</h2><a class="btn btn-red" href="#/" style="margin-top:14px">${tr('ارجع للمنيو','Back to menu')}</a></div>`;return}
+  if(!cartCount()){$('#checkout').innerHTML=`<div class="empty"><div style="font-size:60px">🍽️</div><h2 style="color:var(--brown)">${tr('طلبك فاضي','Your order is empty')}</h2><a class="btn btn-red" href="#/" style="margin-top:14px">${tr('ارجع للمنيو','Back to menu')}</a></div>`;return}
   if(!CO.pay)CO.pay=u.lastPay||'cash';if(!CO.wallet)CO.wallet=u.phone;
   if(!CO.noteInit){CO.noteInit=1;if(!CO.riderNote&&u.riderNote)CO.riderNote=u.riderNote}
   const T=totals(),lead=leadFor(T.sub),groups=bookableSlots(Date.now(),CFG,lead),allSlots=groups.flatMap(g=>g.slots),canNow=openNow();
@@ -886,9 +886,9 @@ function renderCheckout(){
       ${(CO.riderNote||'')!==(u.riderNote||'')?`<label class="check ${CO.saveNote?'on':''}" id="saveNote" style="margin:10px 0 0"><span class="box">${CO.saveNote?'✓':''}</span>${tr('احفظها للمرات الجاية','Remember it for next time')}</label>`:(u.riderNote?`<div class="secure">✓ ${tr('دي ملاحظتك الثابتة — بتتكتب لوحدها','Your standing note — filled in automatically')}</div>`:'')}
       ${u.kitchenNote?`<div class="secure">📌 ${tr('ملاحظة المطبخ الثابتة:','Standing kitchen note:')} <b>${esc(u.kitchenNote)}</b> · <a href="#/profile" class="link" onclick="pTab='settings'">${tr('تعديل','Edit')}</a></div>`:''}</div>
   </div>
-  <div class="sticky-side"><div class="panel"><h2>🍽️ ${tr('صينيتك','Your tray')}</h2>
+  <div class="sticky-side"><div class="panel"><h2>🍽️ ${tr('طلبك','Your order')}</h2>
     ${S.cart.map(l=>`<div class="sumrow"><span>${l.qty} × ${L(BY[l.id])}${variant(BY[l.id],l.o)?` <span class="muted">(${L(variant(BY[l.id],l.o))})</span>`:''}</span><span>${money(unit(BY[l.id],l.o)*l.qty)}</span></div>`).join('')}
-    <button class="chip" style="margin:8px 0" id="editTray">✏️ ${tr('عدّل الصينية','Edit tray')}</button>
+    <button class="chip" style="margin:8px 0" id="editTray">✏️ ${tr('عدّل الطلب','Edit order')}</button>
     <div style="display:flex;gap:8px;margin:10px 0"><input id="promo" placeholder="${tr('كود خصم','Promo code')}" value="${esc(CO.promo)}"><button class="btn btn-ghost" id="promoGo">${tr('تطبيق','Apply')}</button></div>
     <hr style="border:0;border-top:1.5px dashed var(--line);margin:12px 0">
     <div class="sumrow"><span class="muted">${tr('الحساب','Subtotal')}</span><span>${money(T.sub)}</span></div>
@@ -948,7 +948,7 @@ function paymob(){
     <button class="btn btn-teal" style="width:100%;margin-top:8px" id="pmOk">✅ ${tr('محاكاة: الدفع نجح','Simulate: payment succeeded')}</button>
     <button class="btn btn-ghost" style="width:100%;margin-top:12px" id="pmFail">❌ ${tr('محاكاة: الدفع فشل','Simulate: payment failed')}</button>`;
     $('#pmOk').onclick=()=>{closeSheet();finalize(true)};
-    $('#pmFail').onclick=()=>{$('#sheet').innerHTML=`<div style="text-align:center;padding:10px 0"><div style="font-size:60px">😕</div><h2 style="color:var(--brown);font-size:30px">${tr('الدفع ماتمش','Payment didn\'t go through')}</h2><p class="muted">${tr('متقلقش، مفيش فلوس اتخصمت. صينيتك لسه محفوظة.','No money was taken. Your tray is still saved.')}</p></div>
+    $('#pmFail').onclick=()=>{$('#sheet').innerHTML=`<div style="text-align:center;padding:10px 0"><div style="font-size:60px">😕</div><h2 style="color:var(--brown);font-size:30px">${tr('الدفع ماتمش','Payment didn\'t go through')}</h2><p class="muted">${tr('متقلقش، مفيش فلوس اتخصمت. طلبك لسه محفوظ.','No money was taken. Your order is still saved.')}</p></div>
       <button class="btn btn-red" style="width:100%" id="pmRetry">${tr('جرّب تاني','Try again')}</button><button class="btn btn-ghost" style="width:100%;margin-top:12px" id="pmCash">💵 ${tr('ادفع كاش بدلها','Pay cash instead')}</button>`;
       $('#pmRetry').onclick=paymob;$('#pmCash').onclick=()=>{CO.pay='cash';closeSheet();renderCheckout();toast(tr('اتغيرت طريقة الدفع لكاش','Switched to cash'))}};
   },1300);
@@ -1002,7 +1002,7 @@ function renderTrack(id){
   if(o.status==='cancelled'){
     $('#track').innerHTML=head+`<div class="panel" style="text-align:center"><div style="font-size:64px">🙏</div><h2 style="justify-content:center;font-size:32px">${tr('الطلب اتلغى','Order cancelled')}</h2>${o.cancelledBy==='admin'?`<p style="font-weight:800;color:var(--red)">${tr('المطعم اعتذر عن الطلب','The restaurant had to cancel')}${o.cancelReason?': '+esc(o.cancelReason):''}</p>`:''}
       <p class="muted">${o.paid?tr('المبلغ هيرجع على نفس وسيلة الدفع خلال 3–7 أيام عمل (Paymob).','Your payment will be refunded to the same method within 3–7 business days (Paymob).'):tr('مفيش أي فلوس اتدفعت.','No money was charged.')} ${o.pgUsed?tr(`ورجعنالك ${o.pgUsed} حمامة.`,`${o.pgUsed} pigeons returned.`):''}</p>
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px"><button class="btn btn-red" id="restoreBtn">🔁 ${tr('رجّع الصينية زي ما كانت','Restore my tray')}</button><a class="btn btn-ghost" href="#/">${tr('المنيو','Menu')}</a></div></div>`+receiptHTML(o);
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px"><button class="btn btn-red" id="restoreBtn">🔁 ${tr('رجّع الطلب زي ما كان','Restore my order')}</button><a class="btn btn-ghost" href="#/">${tr('المنيو','Menu')}</a></div></div>`+receiptHTML(o);
     $('#restoreBtn').onclick=()=>{o.lines.forEach(l=>{if(!BY[l.id])return;const ex=S.cart.find(x=>x.k===l.k);ex?ex.qty+=l.qty:S.cart.push({...l,o:{...l.o}})});save();location.hash='#/';setTimeout(openDrawer,350)};
     return;
   }
@@ -1050,29 +1050,29 @@ const b64e=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/
 const b64d=s=>decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/'))));
 function trayText(lines){return lines.map(l=>`• ${l.qty} × ${L(BY[l.id])}${variant(BY[l.id],l.o)?' ('+L(variant(BY[l.id],l.o))+')':''}`).join('\n')}
 function openShare(){
-  if(!cartCount())return toast(tr('الصينية فاضية','Your tray is empty'));
+  if(!cartCount())return toast(tr('طلبك فاضي','Your order is empty'));
   const u=me(),payload={n:u?u.name.split(' ')[0]:'',l:S.cart.map(l=>[l.id,l.o,l.qty])};
   const url=location.href.split('#')[0]+'#/tray/'+b64e(JSON.stringify(payload));
-  const msg=tr(`🍽️ صينية أبو قورة\n${trayText(S.cart)}\nالإجمالي: ${money(cartSub())}\n\nزوّد عليها اللي نفسك فيه وابعتهالي تاني 👇\n${url}`,`🍽️ Abo Qora tray\n${trayText(S.cart)}\nTotal: ${money(cartSub())}\n\nAdd what you'd like and send it back 👇\n${url}`);
-  openSheet(`${H2(tr('صينية العيلة 👨‍👩‍👧‍👦','Family tray 👨‍👩‍👧‍👦'))}<p class="muted" style="margin:4px 0 14px">${tr('ابعت الصينية لأهلك أو صحابك — كل واحد يفتح اللينك يلاقيها جاهزة، يزوّد اللي نفسه فيه ويبعتهالك تاني. ومحدش هيقولك «اطلبلي أي حاجة» تاني 😄','Send your tray to family or friends — they open it, add what they want and send it back. No more "just order me anything" 😄')}</p>
+  const msg=tr(`🍽️ طلب من أبو قورة\n${trayText(S.cart)}\nالإجمالي: ${money(cartSub())}\n\nزوّد عليه اللي نفسك فيه وابعتهولي تاني 👇\n${url}`,`🍽️ Abo Qora order\n${trayText(S.cart)}\nTotal: ${money(cartSub())}\n\nAdd what you'd like and send it back 👇\n${url}`);
+  openSheet(`${H2(tr('طلب العيلة 👨‍👩‍👧‍👦','Family order 👨‍👩‍👧‍👦'))}<p class="muted" style="margin:4px 0 14px">${tr('ابعت طلبك لأهلك أو صحابك — كل واحد يفتح اللينك يلاقيه جاهز، يزوّد اللي نفسه فيه ويبعتهولك تاني. ومحدش هيقولك «اطلبلي أي حاجة» تاني 😄','Send your order to family or friends — they open it, add what they want and send it back. No more "just order me anything" 😄')}</p>
     <div class="panel" style="padding:14px;white-space:pre-line;font-size:14px;max-height:180px;overflow:auto">${esc(trayText(S.cart))}</div>
-    <a class="btn btn-teal" style="width:100%" id="waBtn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">🟢 ${tr('ابعتها على واتساب','Send on WhatsApp')}</a>
+    <a class="btn btn-teal" style="width:100%" id="waBtn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">🟢 ${tr('ابعته على واتساب','Send on WhatsApp')}</a>
     <div style="display:flex;gap:8px;margin-top:12px"><input id="shareUrl" readonly value="${esc(url)}" dir="ltr" style="font-size:12px"><button class="btn btn-ghost" id="copyBtn">${tr('انسخ','Copy')}</button></div>
     ${navigator.share?`<button class="btn btn-ghost" style="width:100%;margin-top:10px" id="nativeShare">📤 ${tr('مشاركة بطريقة تانية','Share another way')}</button>`:''}`);
   $('#copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(url);toast(tr('اللينك اتنسخ ✓','Link copied ✓'))}catch(e){$('#shareUrl').select();toast(tr('اضغط Ctrl+C للنسخ','Press Ctrl+C to copy'))}};
-  $('#nativeShare')&&($('#nativeShare').onclick=()=>navigator.share({title:tr('صينية أبو قورة','Abo Qora tray'),text:msg}).catch(()=>{}));
+  $('#nativeShare')&&($('#nativeShare').onclick=()=>navigator.share({title:tr('طلب من أبو قورة','Abo Qora order'),text:msg}).catch(()=>{}));
 }
 function openIncoming(code){
   let data;try{data=JSON.parse(b64d(code))}catch(e){toast(tr('اللينك ده مش شغال','This link is broken'));location.hash='#/';return}
   const lines=(data.l||[]).filter(([id])=>BY[id]&&!BY[id].dine&&!BY[id].out).map(([id,o,qty])=>{o={...(o||{})};delete o.offer;return{k:keyOf(id,o),id,o,qty:Math.max(1,Math.min(99,+qty||1))}});
   if(!lines.length){location.hash='#/';return}
   const tot=lines.reduce((s,l)=>s+unit(BY[l.id],l.o)*l.qty,0),from=data.n?esc(data.n):tr('حد بيحبك','someone who loves you');
-  openSheet(`${H2('📥 '+tr('صينية جاتلك من ','A tray from ')+from)}<p class="muted" style="margin:4px 0 12px">${tr('زوّد عليها اللي نفسك فيه، وبعدين يا تطلبها يا تبعتها تاني.','Add what you like, then order it or send it back.')}</p>
+  openSheet(`${H2('📥 '+tr('طلب جالك من ','An order from ')+from)}<p class="muted" style="margin:4px 0 12px">${tr('زوّد عليه اللي نفسك فيه، وبعدين يا تطلبه يا تبعته تاني.','Add what you like, then order it or send it back.')}</p>
     ${lines.map(l=>`<div class="line">${pic(BY[l.id])}<div class="info"><b>${l.qty} × ${L(BY[l.id])}</b><small>${esc(optSummary(BY[l.id],l.o))}</small></div><b>${money(unit(BY[l.id],l.o)*l.qty)}</b></div>`).join('')}
     <div class="sumrow total"><span>${tr('الإجمالي','Total')}</span><span>${money(tot)}</span></div>
-    <button class="btn btn-red" style="width:100%;margin-top:10px" id="inMerge">${S.cart.length?tr('ضيفها على صينيتي','Add to my tray'):tr('خليها صينيتي','Make it my tray')}</button>
-    ${S.cart.length?`<button class="btn btn-ghost" style="width:100%;margin-top:10px" id="inReplace">${tr('استبدل صينيتي بيها','Replace my tray')}</button>`:''}`,()=>{if(location.hash.startsWith('#/tray/'))location.hash='#/'});
-  const apply=replace=>{if(replace)S.cart=[];lines.forEach(l=>{const ex=S.cart.find(x=>x.k===l.k);ex?ex.qty+=l.qty:S.cart.push(l)});save();closeSheet();refresh();setTimeout(openDrawer,350);toast(tr('🍽️ الصينية اتحطت — زوّد عليها براحتك','🍽️ Tray loaded — add whatever you like'))};
+    <button class="btn btn-red" style="width:100%;margin-top:10px" id="inMerge">${S.cart.length?tr('ضيفه على طلبي','Add to my order'):tr('خليه طلبي','Make it my order')}</button>
+    ${S.cart.length?`<button class="btn btn-ghost" style="width:100%;margin-top:10px" id="inReplace">${tr('استبدل طلبي بيه','Replace my order')}</button>`:''}`,()=>{if(location.hash.startsWith('#/tray/'))location.hash='#/'});
+  const apply=replace=>{if(replace)S.cart=[];lines.forEach(l=>{const ex=S.cart.find(x=>x.k===l.k);ex?ex.qty+=l.qty:S.cart.push(l)});save();closeSheet();refresh();setTimeout(openDrawer,350);toast(tr('🍽️ الطلب اتحط — زوّد عليه براحتك','🍽️ Order loaded — add whatever you like'))};
   $('#inMerge').onclick=()=>apply(false);$('#inReplace')&&($('#inReplace').onclick=()=>apply(true));
 }
 
@@ -1082,7 +1082,7 @@ function openIncoming(code){
 let pTab='orders';
 function reorder(oid,fromEl){const u=me(),o=u.orders.find(x=>x.id===oid);if(!o)return;
   o.lines.forEach(l=>{const it=BY[l.id];if(!it||it.out||it.hidden)return;const oo={...l.o};delete oo.offer;const k=keyOf(l.id,oo),ex=S.cart.find(x=>x.k===k);ex?ex.qty+=l.qty:S.cart.push({k,id:l.id,o:oo,qty:l.qty})});save();
-  if(fromEl&&!reduce)fly(fromEl,BY[o.lines[0].id],refresh);else refresh();toast(tr('🔁 طلبك المعتاد اتحط في الصينية','🔁 Your usual is in the tray'))}
+  if(fromEl&&!reduce)fly(fromEl,BY[o.lines[0].id],refresh);else refresh();toast(tr('🔁 طلبك المعتاد اتضاف','🔁 Your usual has been added'))}
 const PG_RATE=CFG.pgRate, REF_GIFT=CFG.refGift;
 function shareRef(u){const msg=tr(`جرّب كبابجي أبو قورة 🔥 سجّل بالكود ${u.ref} وخد ${REF_GIFT} حمامة هدية (= ${money(REF_GIFT*PG_RATE)} خصم) 🕊️\n${location.href.split('#')[0]}`,`Try Abo Qora Kababgy 🔥 Sign up with code ${u.ref} and get ${REF_GIFT} pigeons (= ${money(REF_GIFT*PG_RATE)} off) 🕊️\n${location.href.split('#')[0]}`);return'https://wa.me/?text='+encodeURIComponent(msg)}
 function renderProfile(){
@@ -1167,7 +1167,7 @@ function offerRoom(id){const of=OFFERS.find(x=>x.id===id);if(!of)return false;co
   return true}
 function addOffer(id,fromEl){const of=OFFERS.find(x=>x.id===id),item=of&&BY[of.item];if(!item||!offerRoom(id))return;
   const o={offer:id,add:[]};if(of.v)o.v=of.v;else if(item.v)o.v=item.v[0].k;if(item.style)o.s=item.style[0].k;
-  addToCart(item.id,o,1,fromEl);toast(`🏷️ ${L(of.title)} ${tr('اتحط في الصينية بسعر العرض','added at the offer price')}`)}
+  addToCart(item.id,o,1,fromEl);toast(`🏷️ ${L(of.title)} ${tr('اتضاف لطلبك بسعر العرض','added at the offer price')}`)}
 function offerList(){const now=Date.now();return OFFERS.map(of=>({of,st:offerState(of,now),item:BY[of.item]}))
   .filter(x=>x.item&&!x.item.hidden&&(x.st.on||(x.st.next&&x.st.next-now<36*3600000)))
   .sort((a,b)=>(b.st.on-a.st.on)||((a.st.until||a.st.next||9e15)-(b.st.until||b.st.next||9e15)))}
@@ -1215,7 +1215,7 @@ function renderOpen(){const c=$('#openChip'),now=Date.now(),sh=shiftAt(now,CFG.h
 setInterval(renderOpen,60000);
 const _applyLang=applyLang;applyLang=function(){_applyLang();renderOpen();renderFooter()};
 /* drop cart lines the admin marked sold-out / hidden / deleted */
-{const before=S.cart.length;S.cart=S.cart.filter(l=>{const i=BY[l.id];return i&&!i.out&&!i.hidden});if(S.cart.length<before){save();setTimeout(()=>toast(tr('شلنا من صينيتك أكلة خلصت','We removed a sold-out item from your tray')),800)}}
+{const before=S.cart.length;S.cart=S.cart.filter(l=>{const i=BY[l.id];return i&&!i.out&&!i.hidden});if(S.cart.length<before){save();setTimeout(()=>toast(tr('شلنا من طلبك أكلة خلصت','We removed a sold-out item from your order')),800)}}
 /* live sync with the admin panel (same browser — the real version uses the server) */
 addEventListener('storage',e=>{
   if(e.key===ADMIN_LS){if(!location.hash.startsWith('#/checkout'))location.reload();return}
