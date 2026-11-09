@@ -6,4 +6,4 @@ deployment:
     - export DEPLOYPATH=$HOME/public_html
     - /bin/mkdir -p $DEPLOYPATH/assets
     - /bin/cp -R assets/. $DEPLOYPATH/assets/
-    - /bin/cp index.html abo-qora-prototype.html admin.html data.js manifest.json sw.js $DEPLOYPATH/
+    - /bin/cp index.html abo-qora-prototype.html admin.html data.js manifest.json sw.js kids.js $DEPLOYPATH/

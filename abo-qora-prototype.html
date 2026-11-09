@@ -227,6 +227,109 @@ section.cat{padding:18px 0 4px;scroll-margin-top:150px}
 /* overlays */
 .overlay{position:fixed;inset:0;background:rgba(59,26,14,.5);backdrop-filter:blur(3px);z-index:80;opacity:0;pointer-events:none;transition:opacity .25s}
 .overlay.on{opacity:1;pointer-events:auto}
+/* ===== Abo Qora Kids ===== */
+.kids-banner{display:flex;align-items:center;gap:14px;margin:26px 0 6px;padding:16px 18px;border-radius:24px;color:#fff;text-decoration:none;
+  background:linear-gradient(120deg,#2E8FA3,#3fb0c4 55%,#E8B66B);box-shadow:0 6px 0 rgba(46,143,163,.35);position:relative;overflow:hidden}
+.kids-banner .em{font-size:44px;animation:kidsFloat 2.4s ease-in-out infinite}
+.kids-banner b{font-family:Lalezar,Cairo,sans-serif;font-size:26px;font-weight:400;display:block;line-height:1.1}
+.kids-banner p{margin:2px 0 0;font-size:14px;font-weight:700;opacity:.95}
+.kids-banner .go{margin-inline-start:auto;background:#fff;color:#2E8FA3;border-radius:999px;padding:8px 14px;font-weight:900;white-space:nowrap}
+.kids-banner.small{margin:14px 0 0;padding:10px 14px;font-weight:800;font-size:14px;box-shadow:none}
+.kids-banner.small .go{padding:6px 12px}
+@keyframes kidsFloat{50%{transform:translateY(-6px) rotate(-6deg)}}
+.kids-hero{display:flex;align-items:center;gap:14px;background:linear-gradient(#bfe6f0,#e9f6f8);border-radius:28px;padding:16px;margin-bottom:16px}
+.kids-hero img{width:92px;height:92px;border-radius:50%;border:5px solid #fff;flex:none;animation:kidsWiggle 3s ease-in-out infinite}
+.kids-hero .bubble{background:#fff;border-radius:20px;padding:12px 16px;font-weight:900;font-size:18px;color:var(--brown);position:relative;line-height:1.5}
+.kids-hero .bubble::before{content:'';position:absolute;inset-inline-start:-10px;top:50%;margin-top:-10px;border:10px solid transparent;border-inline-end-color:#fff;border-inline-start:0}
+@keyframes kidsWiggle{0%,100%{transform:rotate(0)}10%{transform:rotate(-8deg)}20%{transform:rotate(6deg)}30%{transform:rotate(0)}}
+.kgames{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px}
+.kgame{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:16px;border-radius:24px;color:#fff;background:var(--c);
+  box-shadow:0 7px 0 rgba(0,0,0,.2);transition:transform .15s;font-family:Cairo,sans-serif}
+.kgame:active{transform:translateY(4px);box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.kgame .em{font-size:52px;line-height:1}
+.kgame h3{font-family:Lalezar,Cairo,sans-serif;font-weight:400;font-size:28px;margin:4px 0 0}
+.kgame p{margin:0;font-size:14px;font-weight:700;opacity:.95;line-height:1.5}
+.kgame .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:12px;font-weight:800}
+.kgame .meta span{background:rgba(255,255,255,.22);border-radius:999px;padding:2px 9px}
+.kgame .play{margin-top:10px;align-self:flex-start;background:#fff;color:var(--c);border-radius:999px;padding:6px 16px;font-weight:900}
+@media(max-width:560px){.kgame{display:grid;grid-template-columns:64px 1fr;column-gap:12px;align-items:center;padding:14px}
+  .kgame .em{grid-row:span 4;font-size:48px;text-align:center}.kgame h3{font-size:24px;margin:0}.kgame p{font-size:13px}
+  .kgame .play{grid-column:2;margin-top:8px;padding:5px 14px}}
+.album{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+@media(max-width:560px){.album{grid-template-columns:repeat(4,1fr)}}
+.stk{aspect-ratio:1;border-radius:18px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:32px;border:2px dashed var(--sand);line-height:1}
+.stk small{font-size:11px;font-weight:800;color:var(--brown);margin-top:4px}
+.stk.got{border:2px solid var(--gold);box-shadow:0 3px 0 var(--sand)}
+.stk.lock{opacity:.45;font-size:22px}
+.parents summary{cursor:pointer;font-weight:900;color:var(--brown)}
+.parents p{margin:8px 0 0;line-height:1.7}
+/* game stage */
+#kidStage{position:fixed;inset:0;z-index:130;display:none;flex-direction:column;background:linear-gradient(#bfe6f0,#e9f6f8 62%,#cde7b0 62%,#9cc47d);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#kidStage.on{display:flex}
+#kidStage.g-memory{background:linear-gradient(#F6E6CC,#fbefdc)}
+#kidStage.g-grill{background:linear-gradient(#ffe9c7,#f6d6a8)}
+.ks-top{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#fff}
+.ks-x{all:unset;cursor:pointer;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:18px;font-weight:900}
+.ks-title{font-family:Lalezar,Cairo,sans-serif;font-weight:400;font-size:24px}
+.ks-hud{margin-inline-start:auto;display:flex;gap:8px}
+.ks-hud span{background:rgba(255,255,255,.25);border-radius:999px;padding:4px 12px;font-weight:900;font-size:16px}
+.ks-area{flex:1;position:relative;overflow:hidden}
+.ks-tip{text-align:center;font-weight:900;color:var(--brown);margin:12px 16px 0;font-size:16px;position:relative;z-index:2}
+.ks-tip img{width:46px;height:46px;border-radius:50%;border:3px solid #fff;vertical-align:middle;margin-inline-end:8px;box-shadow:0 3px 8px rgba(0,0,0,.15);animation:kidsWiggle 3s ease-in-out infinite}
+.ks-float{position:absolute;z-index:5;font-weight:900;font-size:22px;pointer-events:none;animation:ksFloat .9s ease-out forwards;text-shadow:0 2px 0 #fff}
+@keyframes ksFloat{to{transform:translateY(-50px);opacity:0}}
+.ks-end{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:rgba(74,30,15,.55);animation:ksFade .25s}
+@keyframes ksFade{from{opacity:0}}
+.ks-card{background:var(--cream2);border-radius:28px;padding:22px 20px;text-align:center;width:min(340px,90%);animation:ksPop .4s cubic-bezier(.2,1.6,.4,1)}
+@keyframes ksPop{from{transform:scale(.6)}}
+.ks-card h2{font-size:30px;color:var(--brown);justify-content:center;margin:6px 0 0}
+.ks-jiddo{width:84px;height:84px;border-radius:50%;border:4px solid #fff;margin-top:-58px;box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.ks-stars{font-size:40px;margin-top:4px}
+.ks-stars span{display:inline-block;filter:grayscale(1);opacity:.3}
+.ks-stars span.on{filter:none;opacity:1;animation:ksStar .5s cubic-bezier(.2,1.8,.4,1) both}
+@keyframes ksStar{from{transform:scale(0) rotate(-90deg)}}
+.ks-prize{display:flex;align-items:center;gap:12px;justify-content:center;background:#fff;border-radius:18px;padding:10px;margin-bottom:12px}
+.ks-prize .stk{width:64px;flex:none;animation:ksPop .5s .5s cubic-bezier(.2,1.8,.4,1) both}
+/* grill */
+.grillbox{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:min(400px,92%);height:min(360px,62%);border-radius:24px;padding:18px 10px 14px;box-sizing:border-box;
+  display:flex;justify-content:space-around;align-items:stretch;background:repeating-linear-gradient(#5a4136 0 6px,#2d211c 6px 26px);box-shadow:inset 0 0 0 8px #7a3b22,0 14px 30px rgba(0,0,0,.3)}
+.coals{position:absolute;inset:auto 14px 10px;height:40%;border-radius:0 0 16px 16px;background:radial-gradient(circle at 20% 80%,#ff7a1a 0 8%,transparent 9%),radial-gradient(circle at 55% 85%,#ff9d2e 0 9%,transparent 10%),radial-gradient(circle at 80% 78%,#ff6a00 0 7%,transparent 8%),linear-gradient(transparent,rgba(255,110,20,.45));animation:coals 1.2s ease-in-out infinite alternate;pointer-events:none}
+@keyframes coals{to{opacity:.6}}
+.skw{all:unset;cursor:pointer;position:relative;width:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:1}
+.skw .stick{position:absolute;top:2px;bottom:26px;width:6px;border-radius:3px;background:#d9b48a}
+.skw .chunk{position:relative;width:52px;height:44px;border-radius:14px;background:#E9A7A0;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18)}
+.skw .lbl{position:relative;margin-top:2px;font-size:12px;font-weight:900;color:#fff;background:rgba(0,0,0,.35);border-radius:999px;padding:1px 8px;min-height:18px}
+.skw.ready{filter:drop-shadow(0 0 10px #ffd34d)}
+.skw.ready .lbl{background:#1d7a3a}
+.skw.burnt{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+/* pigeons */
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.9;animation:cloud 18s linear infinite}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.cloud.c1{width:110px;height:34px;top:18%;left:-120px}.cloud.c1::before{width:50px;height:50px;top:-24px;left:18px}.cloud.c1::after{width:40px;height:40px;top:-16px;left:55px}
+.cloud.c2{width:80px;height:26px;top:34%;left:-90px;animation-duration:26s;animation-delay:-9s}.cloud.c2::before{width:36px;height:36px;top:-18px;left:14px}
+@keyframes cloud{to{transform:translateX(calc(100vw + 260px))}}
+.bird{all:unset;cursor:pointer;position:absolute;left:0;top:0;font-size:44px;line-height:1;z-index:3;padding:8px;will-change:transform}
+.bird.going{transition:transform .6s ease-in,opacity .6s;opacity:.2}
+.loft{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);width:120px;z-index:2;text-align:center}
+.loft .roof{width:0;height:0;margin:auto;border-left:70px solid transparent;border-right:70px solid transparent;border-bottom:42px solid #D3202A}
+.loft .box{height:60px;margin:0 10px;background:#E8B66B;border:4px solid #5B2614;display:flex;justify-content:space-around;align-items:center}
+.loft .box span{width:18px;height:18px;border-radius:50% 50% 0 0;background:#5B2614}
+.loft .pole{width:10px;height:40px;margin:auto;background:#7A3B22}
+.loft b{position:absolute;top:-38px;left:50%;transform:translateX(-50%);background:#fff;color:var(--brown);border-radius:999px;padding:2px 12px;font-size:18px;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+/* memory */
+.mem{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px;max-width:400px;margin:0 auto}
+@media(min-width:620px){.mem{grid-template-columns:repeat(4,1fr);max-width:520px}}
+.mem{position:relative;z-index:1}
+.mc{all:unset;cursor:pointer;aspect-ratio:1;display:block}
+.mc .in{display:block;position:relative;width:100%;height:100%}
+.mc .b,.mc .f{position:absolute;inset:0;border-radius:18px;display:grid;place-items:center;box-shadow:0 5px 0 rgba(0,0,0,.15);transition:opacity .18s,transform .22s cubic-bezier(.2,1.6,.4,1)}
+.mc .b{background:var(--brown) var(--tri) repeat-x bottom/90px auto}
+.mc .b img{width:56%;border-radius:50%;border:3px solid var(--sand)}
+.mc .f{background:#fff;font-size:46px;opacity:0;transform:scale(.5)}
+.mc.open .f{opacity:1;transform:none}
+.mc.open .b{opacity:0;transform:scale(.9)}
+.mc.done .f{background:#dff3e2;box-shadow:0 0 0 4px #1d7a3a inset}
 /* install-as-app prompt */
 .inst-head{display:flex;align-items:center;gap:14px;margin-top:4px}
 .inst-head img{width:64px;height:64px;border-radius:16px;box-shadow:0 6px 16px rgba(74,30,15,.25);flex:none}
@@ -468,6 +571,7 @@ footer.site img{width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)}
 
     <div class="sec-head"><span class="brush" data-t="الصواني|Feast Trays"></span><span class="note" data-t="اختار على قد عددكم ↓|Pick by your group size ↓"></span></div>
     <div class="sawani" id="sawani"></div>
+    <a href="#/kids" class="kids-banner"><span class="em">🎈</span><div><b data-t="أبو قورة كيدز|Abo Qora Kids"></b><p data-t="ألعاب للصغيرين وانتو مستنيين الأكل — شوّي مع جدو ورجّع الحمام الغية|Little games while you wait — grill with Grandpa and bring the pigeons home"></p></div><span class="go" data-t="يلا نلعب ←|Let’s play →"></span></a>
   </div>
 
   <nav class="menu-nav">
@@ -485,12 +589,15 @@ footer.site img{width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)}
 <main id="view-checkout" class="view"><div class="wrap" id="checkout"></div></main>
 <main id="view-track" class="view"><div class="wrap" id="track"></div></main>
 <main id="view-profile" class="view"><div class="wrap" id="profile"></div></main>
+<main id="view-kids" class="view"><div class="wrap" id="kids"></div></main>
+<div id="kidStage" role="dialog" aria-modal="true"></div>
 
 <footer class="site"><div class="tri"></div><img src="assets/logo_circle.jpg" alt=""><h2 style="font-size:34px;margin-top:10px" data-t="كبابجي أبو قورة|Abo Qora Kababgy"></h2>
   <div class="wrap foot-grid">
     <div><b data-t="📍 العنوان|📍 Address"></b><p data-t="(عنوان الفرع — مستني البيانات)|(Branch address — pending)"></p></div>
     <div><b data-t="🕐 المواعيد|🕐 Hours"></b><p id="footHours"></p></div>
     <div><b data-t="📞 كلمنا|📞 Contact"></b><p><a id="footWa" target="_blank" rel="noopener">WhatsApp</a> · <a href="https://www.facebook.com/aboqoura" target="_blank" rel="noopener">Facebook</a></p></div>
+    <div><b data-t="🎈 للأطفال|🎈 For kids"></b><p><a href="#/kids" data-t="أبو قورة كيدز — ألعاب|Abo Qora Kids — games"></a></p></div>
     <div id="footApp"><b data-t="📲 التطبيق|📲 App"></b><p><a href="#" data-install data-t="حمّل أبو قورة على موبايلك|Add Abo Qora to your phone"></a></p></div>
     <div><b data-t="📄 السياسات|📄 Policies"></b><p><a href="#" data-policy="terms" data-t="الشروط والأحكام|Terms"></a> · <a href="#" data-policy="privacy" data-t="الخصوصية|Privacy"></a> · <a href="#" data-policy="refund" data-t="الاسترجاع والإلغاء|Refunds"></a></p></div>
   </div><p style="opacity:.75;font-size:13px" data-t="نموذج أولي — الدفع والطلبات للتجربة فقط|Prototype — payments and orders are simulated"></p></footer>
@@ -511,6 +618,7 @@ footer.site img{width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)}
 <div class="toast" id="toast"></div>
 
 <script src="data.js?v=7"></script>
+<script src="kids.js?v=1"></script>
 <script>
 /* =========================================================
    I18N helpers
@@ -1043,6 +1151,7 @@ function renderTrack(id){
     <div class="stages"><div class="fillbar" style="width:${st/4*84}%"></div>${STAGES.map(([e,l],i)=>`<div class="stg ${i<st?'done':i===st?'now':''}"><div class="c">${e}</div>${L(l)}</div>`).join('')}</div>
     ${canCancel&&st<4?`<div class="cancel-box"><span>⏳ ${o.time?tr(`تقدر تلغي لحد قبل المعاد بـ ${CFG.schedCancelMin} دقيقة`,`You can cancel up to ${CFG.schedCancelMin} min before`):tr(`تقدر تلغي خلال <b>${secs}</b> ثانية — قبل ما الأكل يتحط على الفحم`,`You can cancel for <b>${secs}</b>s — before it hits the grill`)}</span><button class="btn btn-ghost" id="cancelBtn" style="padding:8px 16px">${tr('إلغاء الطلب','Cancel order')}</button></div>`:''}
     ${st===4?`<div style="text-align:center"><p class="muted">${tr('الأكل كان عامل إيه؟','How was the food?')}</p><div class="stars">${[1,2,3,4,5].map(i=>`<button data-r="${i}" class="${o.rating>=i?'on':''}">⭐</button>`).join('')}</div>${o.rating?`<p style="color:var(--green);font-weight:800">${tr('شكراً! رأيك بيفرق معانا 🙏','Thank you! 🙏')}</p>`:''}</div>`:`<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px"><button class="btn btn-ghost" disabled>📞 ${tr('كلّم الطيار','Call rider')}</button><button class="btn btn-ghost" id="helpBtn">💬 ${tr('محتاج مساعدة؟','Need help?')}</button></div>`}
+    ${st<4?`<a class="kids-banner small" href="#/kids"><span class="em" style="font-size:28px">🎈</span><span>${tr('الأكل لسه على الفحم؟ خلّي الأولاد يلعبوا مع جدو أبو قورة','Food still on the coals? Let the kids play with Grandpa Abo Qora')}</span><span class="go">${tr('يلا ←','Play →')}</span></a>`:''}
     <p class="muted" style="font-size:11px;text-align:center;margin-top:14px">${tr('(النموذج أسرع من الحقيقة: الإلغاء متاح 20 ثانية بدل دقيقتين، والطلب بيوصل في أقل من دقيقة)','(Prototype runs fast: 20s cancel window instead of 2 min, delivery in under a minute)')}</p></div>
   ${o.wa&&o.wa.length?`<div class="panel" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="font-size:30px">📲</span><div style="flex:1;min-width:200px"><b>${o.wa.includes('customer')?tr('بعتنالك ملخص الطلب على واتساب','We sent your order summary on WhatsApp'):''}</b><div class="muted" style="font-size:13px">${o.wa.includes('restaurant')?tr('✓ والمطعم استلم الطلب على واتساب كمان','✓ The restaurant received it on WhatsApp too'):''}${o.wa.includes('customer')?' · '+tr('وهنبعتلك تحديثات الطلب هناك','status updates will follow there'):''}</div></div>${o.wa.includes('customer')?`<button class="btn btn-ghost" id="waShow">${tr('شوف الرسالة','View message')}</button>`:''}</div>`:''}
   <div class="co"><div>${receiptHTML(o)}</div><div class="panel"><h2>${o.mode==='pickup'?'🏪 '+tr('استلام من الفرع','Pickup'):'📍 '+tr('التوصيل لـ','Delivering to')}</h2>${o.addr?`<b>${L(LBL[o.addr.label]||LBL.other)}</b><div class="muted" style="font-size:14px">${esc(addrLine(o.addr))}</div>`:''}${o.riderNote?`<div class="secure">📝 ${esc(o.riderNote)}</div>`:''}</div></div>`;
@@ -1163,10 +1272,11 @@ $('#addrPill').onclick=()=>{const u=me();if(!u)openLogin(()=>openAddress(null));
 $('#profileBtn').onclick=()=>location.hash='#/profile';
 function refresh(){renderDock();refreshHeader();const v=location.hash.split('/')[1]||'';if(!v){renderMenu();renderUsual();renderOffers()}if(v==='checkout')renderCheckout();if($('#drawer').classList.contains('on'))renderDrawer()}
 function route(keepScroll){
-  const [,v='',arg]=location.hash.split('/');if(!keepScroll)closeAll();
+  const [,v='',arg]=location.hash.split('/');if(!keepScroll)closeAll();if(v!=='kids'&&typeof closeGame==='function')closeGame();
   $$('.view').forEach(x=>x.classList.remove('on'));const show=id=>$('#view-'+id).classList.add('on');
   $('#dock').classList.toggle('hide',v!==''&&v!=='tray');
   if(v==='checkout'){show('checkout');renderCheckout()}else if(v==='track'){show('track');renderTrack(arg)}else if(v==='profile'){show('profile');renderProfile()}
+  else if(v==='kids'){show('kids');renderKids(arg)}
   else{show('menu');renderSawani();renderMenu();renderUsual();renderOffers();if(v==='tray'&&arg)setTimeout(()=>openIncoming(arg),250)}
   if(!keepScroll)scrollTo({top:0});renderDock();refreshHeader();
 }
@@ -1321,7 +1431,7 @@ function askInstall(ctx){
   if(ctx==='order'){if(inst.lastAsk&&now-inst.lastAsk<864e5)return}
   else if((inst.asks||0)>=4||now<(inst.snoozeUntil||0))return; // on open: first visit, then again after a snooze
   let tries=0;const go=()=>{                              // wait until nothing else is open
-    const busy=$('#sheet').classList.contains('on')||$('#drawer').classList.contains('on')||location.hash.startsWith('#/tray/')||location.hash==='#/checkout';
+    const busy=$('#sheet').classList.contains('on')||$('#drawer').classList.contains('on')||location.hash.startsWith('#/tray/')||location.hash.startsWith('#/kids')||location.hash==='#/checkout';
     if(busy){if(++tries<12)setTimeout(go,5000);return}
     openInstall(ctx)};
   go();
