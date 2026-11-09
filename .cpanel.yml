@@ -1,0 +1,9 @@
+---
+# cPanel → Git Version Control → "Deploy HEAD Commit" runs these tasks.
+# Copies the site into the main domain (public_html). Other files there are kept.
+deployment:
+  tasks:
+    - export DEPLOYPATH=$HOME/public_html
+    - /bin/mkdir -p $DEPLOYPATH/assets
+    - /bin/cp -R assets/. $DEPLOYPATH/assets/
+    - /bin/cp index.html abo-qora-prototype.html admin.html data.js $DEPLOYPATH/
