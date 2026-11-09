@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "كبابجي أبو قورة",
+  "short_name": "أبو قورة",
+  "description": "اطلب مشويات وطواجن وصواني أبو قورة — فلاحي على أبوه",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6E6CC",
+  "theme_color": "#5B2614",
+  "categories": ["food", "shopping"],
+  "icons": [
+    { "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "طلباتي", "short_name": "طلباتي", "url": "/?source=app#/profile", "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

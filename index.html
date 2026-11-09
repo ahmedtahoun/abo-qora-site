@@ -7,7 +7,12 @@
 <meta name="description" content="كبابجي أبو قورة — مشويات على الفحم وطواجن في الفخار وصواني تكفي العيلة كلها. اطلب أونلاين وادفع كارت أو محفظة أو كاش، وتابع طلبك لحد باب بيتك.">
 <meta name="theme-color" content="#5B2614">
 <link rel="icon" href="assets/logo_circle.jpg">
-<link rel="apple-touch-icon" href="assets/logo_circle.jpg">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="أبو قورة">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="canonical" href="https://aboqoura.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="كبابجي أبو قورة">
@@ -222,6 +227,21 @@ section.cat{padding:18px 0 4px;scroll-margin-top:150px}
 /* overlays */
 .overlay{position:fixed;inset:0;background:rgba(59,26,14,.5);backdrop-filter:blur(3px);z-index:80;opacity:0;pointer-events:none;transition:opacity .25s}
 .overlay.on{opacity:1;pointer-events:auto}
+/* install-as-app prompt */
+.inst-head{display:flex;align-items:center;gap:14px;margin-top:4px}
+.inst-head img{width:64px;height:64px;border-radius:16px;box-shadow:0 6px 16px rgba(74,30,15,.25);flex:none}
+.inst-head h2{font-size:26px;color:var(--brown);line-height:1.2;margin:0}
+.inst-perks{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 6px}
+.inst-perks span{background:#fff;border:1.5px solid var(--sand);border-radius:999px;padding:4px 11px;font-size:13px;font-weight:800;color:var(--brown)}
+.inst-steps{list-style:none;padding:0;margin:12px 0;display:grid;gap:8px}
+.inst-steps li{display:flex;gap:10px;align-items:center;background:#fff;border-radius:14px;padding:10px 12px;font-weight:700;line-height:1.5}
+.inst-steps .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:900}
+.inst-ico{display:inline-grid;place-items:center;vertical-align:middle;width:28px;height:28px;border-radius:8px;background:#e9eef6;color:#0a66d8;margin:0 2px}
+.inst-ico svg{width:18px;height:18px}
+.inst-note{font-size:12px;text-align:center;margin-top:8px}
+.inst-hint{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:95;width:min(340px,calc(100% - 24px));background:var(--brown);color:var(--cream);padding:10px 14px 6px;border-radius:16px;font-weight:800;font-size:14px;line-height:1.5;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.inst-hint .arrow{display:block;font-size:24px;line-height:1;animation:instBob 1s ease-in-out infinite}
+@keyframes instBob{50%{transform:translateY(6px)}}
 .sheet{position:fixed;z-index:90;left:50%;bottom:0;transform:translate(-50%,105%);width:min(560px,100%);max-height:92vh;overflow:auto;background:var(--cream2);border-radius:28px 28px 0 0;padding:0 20px 24px;transition:transform .35s cubic-bezier(.2,.9,.3,1)}
 .sheet::before{content:'';display:block;height:16px;margin:0 -20px 14px;background:var(--tri) repeat-x;background-size:auto 16px;border-radius:28px 28px 0 0}
 .sheet.on{transform:translate(-50%,0)}
@@ -471,6 +491,7 @@ footer.site img{width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)}
     <div><b data-t="📍 العنوان|📍 Address"></b><p data-t="(عنوان الفرع — مستني البيانات)|(Branch address — pending)"></p></div>
     <div><b data-t="🕐 المواعيد|🕐 Hours"></b><p id="footHours"></p></div>
     <div><b data-t="📞 كلمنا|📞 Contact"></b><p><a id="footWa" target="_blank" rel="noopener">WhatsApp</a> · <a href="https://www.facebook.com/aboqoura" target="_blank" rel="noopener">Facebook</a></p></div>
+    <div id="footApp"><b data-t="📲 التطبيق|📲 App"></b><p><a href="#" data-install data-t="حمّل أبو قورة على موبايلك|Add Abo Qora to your phone"></a></p></div>
     <div><b data-t="📄 السياسات|📄 Policies"></b><p><a href="#" data-policy="terms" data-t="الشروط والأحكام|Terms"></a> · <a href="#" data-policy="privacy" data-t="الخصوصية|Privacy"></a> · <a href="#" data-policy="refund" data-t="الاسترجاع والإلغاء|Refunds"></a></p></div>
   </div><p style="opacity:.75;font-size:13px" data-t="نموذج أولي — الدفع والطلبات للتجربة فقط|Prototype — payments and orders are simulated"></p></footer>
 
@@ -964,7 +985,7 @@ function finalize(paid){
   u.pigeons=Math.max(0,(u.pigeons||0)-T.pgUsed+o.pgEarned);
   const why=[];if(CFG.confirmFirstCash&&first&&CO.pay==='cash')why.push('أول طلب للعميل وكاش');if(CFG.confirmAbove&&T.total>=CFG.confirmAbove)why.push(`طلب كبير (${waMoney(T.total)})`);
   if(why.length){o.needConfirm=true;o.confirmWhy=why.join(' + ')}
-  u.orders.unshift(o);u.lastPay=CO.pay;S.cart=[];save();CO=CO0();location.hash='#/track/'+o.id;
+  u.orders.unshift(o);u.lastPay=CO.pay;S.cart=[];save();CO=CO0();location.hash='#/track/'+o.id;setTimeout(()=>askInstall('order'),3000);
   /* WhatsApp: summary to the restaurant + confirmation to the customer (simulated outbox) */
   const WA=M.wa,msgs=[];
   if(WA.notifyRestaurant)msgs.push({to:WA.restaurant,toName:'المطعم',kind:'restaurant',orderId:o.id,text:waOrderSummary(o,u,BY)});
@@ -1222,6 +1243,95 @@ addEventListener('storage',e=>{
   if(e.key===LS&&e.newValue){try{const lang=S.lang;S=Object.assign(S,JSON.parse(e.newValue));S.lang=lang}catch(_){return}
     refreshHeader();renderDock();if(location.hash.startsWith('#/track/'))renderTrack(location.hash.split('/')[2]);else if(location.hash==='#/profile')renderProfile()}
 });
+
+/* =========================================================
+   INSTALL AS APP — "add to home screen"
+   Android/Chrome: our button opens the browser's own install dialog
+   (beforeinstallprompt) → icon is created automatically.
+   iPhone: Apple allows no automatic install — we guide the 2 taps
+   (⋯ / Share → Add to Home Screen) with a pointer to Safari's bar.
+   In-app browsers (Facebook, Instagram…): ask to open in Safari/Chrome.
+   Asks: first visit after a few seconds, and after a first order;
+   "Not now" snoozes 3 days; never more than 4 times; never inside the app.
+   ========================================================= */
+const INST_LS='aq_install_v1';
+const inst=(()=>{try{return JSON.parse(localStorage.getItem(INST_LS))||{}}catch(e){return{}}})();
+const saveInst=()=>{try{localStorage.setItem(INST_LS,JSON.stringify(inst))}catch(e){}};
+const UA=navigator.userAgent;
+const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const forcedDevice=new URLSearchParams(location.search).get('device'); // preview: ?device=ios | android
+const isIOS=forcedDevice?forcedDevice==='ios':/iphone|ipad|ipod/i.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isAndroid=forcedDevice?forcedDevice==='android':/android/i.test(UA);
+const inAppBrowser=/FBAN|FBAV|FB_IAB|Instagram|Line\/|Snapchat|TikTok|musical_ly|GSA\//i.test(UA)||(isAndroid&&/; wv\)/.test(UA));
+let deferredInstall=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;syncInstallLinks()});
+addEventListener('appinstalled',()=>{inst.installed=true;saveInst();deferredInstall=null;syncInstallLinks();
+  if($('#sheet').classList.contains('on')&&$('#sheet .inst-head'))closeSheet();toast(tr('تمام! أبو قورة بقى على موبايلك 🎉','Done! Abo Qora is on your phone 🎉'))});
+const canInstall=()=>!isStandalone()&&!inst.installed&&(isIOS||isAndroid||!!deferredInstall);
+function syncInstallLinks(){const f=$('#footApp');if(f)f.hidden=!canInstall()}
+const ICO_SHARE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg>';
+const ICO_MORE='<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
+const ICO_ADD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
+const ICO_KEBAB='<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
+const ico=s=>`<span class="inst-ico">${s}</span>`;
+const step=(n,html)=>`<li><span class="n">${n}</span><span>${html}</span></li>`;
+
+function openInstall(ctx){
+  if(!canInstall())return;
+  inst.asks=(inst.asks||0)+1;inst.lastAsk=Date.now();saveInst();
+  const head=ctx==='order'
+    ?[tr('طلبك اتسجل 🎉 خلّي أبو قورة على موبايلك','Order placed 🎉 Keep Abo Qora on your phone'),tr('تتابع طلبك وتطلب تاني بضغطة من أيقونة على الشاشة الرئيسية — من غير ما تدوّر على اللينك.','Track this order and reorder in one tap from your home screen — no searching for the link.')]
+    :[tr('خلّي أبو قورة على موبايلك 📲','Put Abo Qora on your phone 📲'),tr('ضيف الموقع للشاشة الرئيسية وهيبقى زي التطبيق بالظبط: أيقونة على موبايلك، يفتح على طول ملو الشاشة، وتطلب في ثواني.','Add it to your home screen and it works just like an app: an icon on your phone, opens full-screen, order in seconds.')];
+  const perks=`<div class="inst-perks"><span>⚡ ${tr('أسرع في الطلب','Faster ordering')}</span><span>🔁 ${tr('طلبك المعتاد بضغطة','Your usual in one tap')}</span><span>📦 ${tr('تابع طلبك','Track your order')}</span><span>🆓 ${tr('ببلاش ومن غير تحميل من المتجر','Free, no app store')}</span></div>`;
+  let body,main;
+  if(inAppBrowser){
+    body=`<ol class="inst-steps">${step(1,isIOS?tr(`اضغط ${ico(ICO_MORE)} أو ${ico(ICO_SHARE)} واختار «فتح في Safari»`,`Tap ${ico(ICO_MORE)} or ${ico(ICO_SHARE)} and choose “Open in Safari”`):tr(`اضغط ${ico(ICO_KEBAB)} واختار «فتح في Chrome»`,`Tap ${ico(ICO_KEBAB)} and choose “Open in Chrome”`))}${step(2,tr('من هناك هنضيفه لموبايلك في ثانية','From there we’ll add it in a second'))}</ol>`;
+    main=`<button class="btn btn-red" style="width:100%" id="instCopy">🔗 ${tr('انسخ اللينك','Copy the link')}</button>`;
+  }else if(deferredInstall){
+    body='';main=`<button class="btn btn-red" style="width:100%" id="instGo">📲 ${tr('ضيفه على الشاشة الرئيسية','Add to home screen')}</button>`;
+  }else if(isIOS){
+    body=`<ol class="inst-steps">${step(1,tr(`اضغط ${ico(ICO_MORE)} أو زرار المشاركة ${ico(ICO_SHARE)} في شريط Safari تحت`,`Tap ${ico(ICO_MORE)} or the Share button ${ico(ICO_SHARE)} in Safari’s bar`))}${step(2,tr(`اختار «إضافة إلى الشاشة الرئيسية» ${ico(ICO_ADD)}<br><small class="muted">لو مش ظاهرة، اضغط «عرض المزيد» أو انزل لتحت</small>`,`Choose “Add to Home Screen” ${ico(ICO_ADD)}<br><small class="muted">Not there? Tap “View More” or scroll down</small>`))}${step(3,tr('اضغط «إضافة» — وخلاص، الأيقونة هتظهر على موبايلك','Tap “Add” — the icon appears on your phone'))}</ol>`;
+    main=`<button class="btn btn-red" style="width:100%" id="instIOS">👇 ${tr('ورّيني فين','Show me where')}</button>`;
+  }else{
+    body=`<ol class="inst-steps">${step(1,tr(`اضغط ${ico(ICO_KEBAB)} فوق في المتصفح`,`Tap ${ico(ICO_KEBAB)} at the top of the browser`))}${step(2,tr('اختار «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»','Choose “Install app” or “Add to Home screen”'))}${step(3,tr('لو مش لاقيها، اختار «فتح في Chrome» الأول','Can’t find it? Choose “Open in Chrome” first'))}</ol>`;
+    main=`<button class="btn btn-red" style="width:100%" id="instOk">${tr('تمام','Got it')}</button>`;
+  }
+  openSheet(`<div class="inst-head"><img src="assets/icons/apple-touch-icon.png" alt=""><h2>${head[0]}</h2></div>
+    <p class="muted" style="margin:10px 0 0">${head[1]}</p>${perks}${body}${main}
+    <button class="btn btn-ghost" style="width:100%;margin-top:10px" id="instLater">${tr('مش دلوقتي','Not now')}</button>
+    <p class="muted inst-note">${tr('مش هياخد مساحة على موبايلك، وتقدر تشيله زي أي أيقونة.','Takes no real space, and you can remove it like any icon.')}</p>`);
+  $('#instLater').onclick=()=>{inst.snoozeUntil=Date.now()+3*864e5;saveInst();closeSheet()};
+  $('#instGo')&&($('#instGo').onclick=async()=>{const ev=deferredInstall;if(!ev)return;deferredInstall=null;ev.prompt();
+    const {outcome}=await ev.userChoice.catch(()=>({outcome:'dismissed'}));closeSheet();
+    if(outcome==='accepted'){inst.installed=true;saveInst();syncInstallLinks()}else{inst.snoozeUntil=Date.now()+3*864e5;saveInst()}});
+  $('#instIOS')&&($('#instIOS').onclick=()=>{closeSheet();showIOSHint()});
+  $('#instOk')&&($('#instOk').onclick=closeSheet);
+  $('#instCopy')&&($('#instCopy').onclick=()=>{const url=location.origin+'/';(navigator.clipboard?.writeText(url)||Promise.reject()).then(()=>toast(tr('اتنسخ — افتحه في Safari أو Chrome','Copied — open it in Safari or Chrome')),()=>prompt(tr('انسخ اللينك ده','Copy this link'),url))});
+}
+function showIOSHint(){
+  $('.inst-hint')?.remove();
+  const h=document.createElement('div');h.className='inst-hint';
+  h.innerHTML=`${tr(`اضغط ${ico(ICO_MORE)} أو ${ico(ICO_SHARE)} تحت ← «إضافة إلى الشاشة الرئيسية»`,`Tap ${ico(ICO_MORE)} or ${ico(ICO_SHARE)} below → “Add to Home Screen”`)}<span class="arrow">⬇</span>`;
+  h.onclick=()=>h.remove();document.body.appendChild(h);setTimeout(()=>h.remove(),15000);
+}
+/* when to ask on its own */
+function askInstall(ctx){
+  if(!canInstall()||(!isIOS&&!isAndroid))return;           // phones only; desktop uses the footer link
+  const now=Date.now();
+  if(ctx==='order'){if(inst.lastAsk&&now-inst.lastAsk<864e5)return}
+  else if((inst.asks||0)>=4||now<(inst.snoozeUntil||0))return; // on open: first visit, then again after a snooze
+  let tries=0;const go=()=>{                              // wait until nothing else is open
+    const busy=$('#sheet').classList.contains('on')||$('#drawer').classList.contains('on')||location.hash.startsWith('#/tray/')||location.hash==='#/checkout';
+    if(busy){if(++tries<12)setTimeout(go,5000);return}
+    openInstall(ctx)};
+  go();
+}
+document.addEventListener('click',e=>{if(e.target.closest('[data-install]')){e.preventDefault();openInstall('manual')}});
+/* opened from the home-screen icon */
+if(isStandalone()&&!inst.installed){inst.installed=true;saveInst();setTimeout(()=>toast(tr('أهلاً بيك في تطبيق أبو قورة 🔥','Welcome to the Abo Qora app 🔥')),1200)}
+if('serviceWorker' in navigator&&location.protocol!=='file:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+syncInstallLinks();
+setTimeout(()=>askInstall('first'),3500);
 applyLang();route();
 setInterval(refreshHeader,2000);
 </script>
