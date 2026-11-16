@@ -21,7 +21,7 @@ const CATS=[
  {id:'rice',ar:'الرز',en:'Rice',ic:'🍚'},
  {id:'pasta',ar:'مكرونات وخضار',en:'Pasta & Veg',ic:'🍝'},
  {id:'salad',ar:'ركن السلطات',en:'Salads',ic:'🥗'},
- {id:'drinks',ar:'المشروبات',en:'Drinks',ic:'☕',note:{ar:'المشروبات في الصالة بس',en:'Drinks are dine-in only'}},
+ {id:'drinks',ar:'المشروبات',en:'Drinks',ic:'🥤'},
 ];
 const WL={k:{ar:'كيلو',en:'1 kg',f:4},h:{ar:'نص كيلو',en:'½ kg',f:2},t:{ar:'تلت كيلو',en:'⅓ kg',f:1.33},q:{ar:'ربع كيلو',en:'¼ kg',f:1}};
 const W=(...ps)=>ps.map(([k,p])=>({k,ar:WL[k].ar,en:WL[k].en,p,f:WL[k].f}));
@@ -37,7 +37,7 @@ const ITEMS0=[
  it({id:'reyash',cat:'grill',ar:'ريش ضاني',en:'Lamb Chops',img:IMG.tray,v:W(['k',1380],['h',705],['t',530]),tags:['premium'],add:GR}),
  it({id:'koftakan',cat:'grill',ar:'كفتة كندوز',en:'Veal Kofta',img:IMG.kofta,v:W(['k',740],['h',375],['t',290],['q',190]),add:GR}),
  it({id:'koftadani',cat:'grill',ar:'كفتة ضاني',en:'Lamb Kofta',img:IMG.kofta,v:W(['k',850],['h',430],['t',330],['q',220]),tags:['pop'],add:GR}),
- it({id:'kebda',cat:'grill',ar:'كبد وكلاوي',en:'Liver & Kidneys',em:'🍖',v:W(['k',690],['h',350],['t',235]),add:GR}),
+ it({id:'kebda',cat:'grill',ar:'كبد وكلاوي',en:'Liver & Kidneys',em:'🍖',v:W(['k',690],['h',350],['q',235]),add:GR}),
  it({id:'steak',cat:'grill',ar:'استيك',en:'Steak',img:IMG.breast,v:W(['k',1380],['h',700],['t',530],['q',360]),tags:['premium'],add:GR}),
  it({id:'tarb',cat:'grill',ar:'طرب',en:'Tarb',img:IMG.tarb,v:W(['k',945],['h',485],['t',365],['q',250]),tags:['pop'],add:GR}),
  it({id:'sujuk',cat:'grill',ar:'سجق',en:'Sujuk Sausage',img:IMG.sujuk,v:W(['k',750],['h',380],['t',290],['q',195]),tags:['hot'],add:GR}),
@@ -117,8 +117,8 @@ const ITEMS0=[
     ['sa7','مخلل','Pickles',25,'🥒'],['sa8','بتنجان مخلل','Pickled Eggplant',25,'🍆'],['sa9','جبنة قديمة','Aged Cheese',40,'🧀'],['sa10','سلطة دقوس','Dakous',25,'🌶️'],['sa11','سلطة زبادي','Yogurt Salad',40,'🥛']]
    .map(([id,ar,en,p,em])=>it({id,cat:'salad',ar,en,p,em,f:.1,tags:['veg']})),
  // drinks (dine-in)
- ...[['d1','شاي','Tea',35,'🍵'],['d2','براد شاي (فردين)','Tea Pot (2)',45,'🫖'],['d3','قهوة','Coffee',40,'☕'],['d4','قهوة فرنساوي','French Coffee',65,'☕'],['d5','ينسون','Anise',30,'🍵'],['d6','شاي أخضر','Green Tea',30,'🍵'],['d7','كانز','Soft Drink',30,'🥫'],['d8','مياه معدنية صغيرة','Small Water',15,'💧'],['d9','عصير فريش','Fresh Juice',65,'🍹']]
-   .map(([id,ar,en,p,em])=>it({id,cat:'drinks',ar,en,p,em,f:0,dine:1})),
+ ...[['d7','كانز','Soft Drink',30,'🥫'],['d8','مياه معدنية صغيرة','Small Water',15,'💧']]
+   .map(([id,ar,en,p,em])=>it({id,cat:'drinks',ar,en,p,em,f:0})),
 ];
 const SAWANI0=[
  ['الحبايب','Al-Habayeb',2,805,'ربع كفتة + نص فرخة + ربع طرب + ربع ممبار + نص كيلو رز + سلطات + عيش','¼ kofta, ½ chicken, ¼ tarb, ¼ mombar, ½ kg rice, salads & bread'],
@@ -131,7 +131,7 @@ const SAWANI0=[
  ['الوحوش','The Beasts',7,2300,'نص كفتة + نص شيش طاووق + نص سجق + نص طرب + ربع ممبار + نفر لحمة مندي + 2 كيلو رز + سلطة خضراء + طحينة + عيش','½ kofta, ½ shish, ½ sujuk, ½ tarb, ¼ mombar, lamb mandi, 2 kg rice, salad, tahini & bread'],
  ['البلد','El-Balad',8,2590,'نص فرخة مندي + نص كفتة + نص شيش طاووق + نص طرب + نص سجق + نص ممبار + 2 كيلو رز + سلطة خضراء + طحينة + دقوس + عيش','½ mandi chicken, ½ kofta, ½ shish, ½ tarb, ½ sujuk, ½ mombar, 2 kg rice, salads & bread'],
  ['العنتيل','Al-Antil',8,2705,'نص كفتة + نص نيفة + نص طرب + نص كباب + نص سجق + نص ريش + 2 كيلو رز + سلطات + عيش','½ kofta, ½ nifa, ½ tarb, ½ kebab, ½ sujuk, ½ chops, 2 kg rice, salads & bread'],
- ['زلزال الأرض','Earthquake',9,2850,'نفر لحم مندي + 3 أرباع فراخ مندي + 3 حمام + ربع شيش + ربع كفتة + ربع طرب + ربع سجق + 4 رقاق + نص كيلو ورق عنب + 2 كيلو رز + سلطات + عيش','Lamb mandi, 3 quarter mandi chickens, 3 pigeons, ¼ shish/kofta/tarb/sujuk, 4 roqaq, ½ kg vine leaves, 2 kg rice, salads & bread'],
+ ['زلزال الأرض','Earthquake',9,2850,'نفر لحم مندي + 3 أرباع فراخ + 3 حمام + ربع شيش + ربع كفتة + ربع طرب + ربع سجق + 4 رقاق + نص كيلو ورق عنب + 2 كيلو رز + سلطات + عيش','Lamb mandi, 3 chicken quarters, 3 pigeons, ¼ shish/kofta/tarb/sujuk, 4 roqaq, ½ kg vine leaves, 2 kg rice, salads & bread'],
  ['أهل الحدائق','Ahl El-Hadayek',10,3210,'5 أرباع فراخ + 5 حمام + 5 صوابع طرب + 5 صوابع كفتة + 5 شيش + 5 سجق + 5 ممبار + محشي مشكل + 3 كيلو رز + سلطات + عيش','5 chicken quarters, 5 pigeons, 5 tarb, 5 kofta, 5 shish, 5 sujuk, 5 mombar, mahshi, 3 kg rice, salads & bread'],
  ['أبو قورة','Abo Qora',12,3795,'كيلو لحم مندي + فرخة مشوية + تلت طرب + تلت كفتة + تلت سجق + تلت ريش + تلت شيش + محشي مشكل + 8 سمبوسة + نص ورق عنب + 2 كيلو رز + سلطات + عيش','1 kg lamb mandi, whole chicken, ⅓ each of tarb, kofta, sujuk, chops & shish, mahshi, 8 sambousek, ½ vine leaves, 2 kg rice, salads & bread'],
 ].map(([ar,en,n,p,dar,den],i)=>it({id:'sn'+i,cat:'sawani',ar,en,p,f:n,ppl:n,d:{ar:dar,en:den},img:[IMG.tray,IMG.tray2,IMG.tagine,IMG.tagine2][i%4],add:['nuts'],tags:i===12?['sig']:i===1||i===6?['pop']:[]}));
