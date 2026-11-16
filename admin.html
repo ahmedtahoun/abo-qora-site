@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة تحكم أبو قورة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,7 +136,7 @@ tr:last-child td{border-bottom:0}
 <div class="toast" id="toast"></div>
 <div id="printArea"></div>
 
-<script src="data.js?v=8"></script>
+<script src="data.js?v=9"></script>
 <script>
 /* =========================================================
    STORE ACCESS — shares the customer site's storage (prototype).
@@ -220,7 +221,7 @@ function renderLogin(){
     <div class="f" style="text-align:start"><label>الكود (PIN)</label><input type="password" id="ap" inputmode="numeric" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:8px"></div>`
    :`<div class="f" style="text-align:start"><label>كلمة سر المالك</label><input type="password" id="ap"></div>`}
   <div id="ae" style="color:var(--red);font-size:13px;min-height:18px;font-weight:800"></div>
-  <button class="btn btn-red" style="width:100%" id="ago">دخول</button><p class="muted" style="font-size:12px;margin:12px 0 0">نموذج تجريبي: المالك <b>admin123</b> · سارة <b>1111</b> · عم حسن <b>2222</b> · محمود <b>3333</b></p></div></div>`;
+  <button class="btn btn-red" style="width:100%" id="ago">دخول</button></div></div>`;
   let pick=null;
   $('#lm').onclick=e=>{const b=e.target.closest('[data-m]');if(b){mode=b.dataset.m;draw()}};
   $('#who')&&($('#who').onclick=e=>{const b=e.target.closest('[data-id]');if(!b)return;pick=b.dataset.id;$$('#who .chip').forEach(x=>x.classList.toggle('on',x===b));$('#ap').focus()});

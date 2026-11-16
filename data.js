@@ -33,17 +33,17 @@ const GR=['tahina','baba','toum','dakous'];
 const it=(o)=>Object.assign({tags:[],add:[],f:1},o);
 const ITEMS0=[
  // meat grills
- it({id:'kebab',cat:'grill',ar:'كباب ضاني',en:'Lamb Kebab',img:IMG.tray2,v:W(['k',1265],['h',645],['t',485],['q',330]),tags:['pop'],add:GR}),
- it({id:'reyash',cat:'grill',ar:'ريش ضاني',en:'Lamb Chops',img:IMG.tray,v:W(['k',1380],['h',705],['t',530]),tags:['premium'],add:GR}),
+ it({id:'kebab',cat:'grill',ar:'كباب ضاني',en:'Lamb Kebab',em:'🍢',v:W(['k',1265],['h',645],['t',485],['q',330]),tags:['pop'],add:GR}),
+ it({id:'reyash',cat:'grill',ar:'ريش ضاني',en:'Lamb Chops',em:'🍖',v:W(['k',1380],['h',705],['t',530]),tags:['premium'],add:GR}),
  it({id:'koftakan',cat:'grill',ar:'كفتة كندوز',en:'Veal Kofta',img:IMG.kofta,v:W(['k',740],['h',375],['t',290],['q',190]),add:GR}),
  it({id:'koftadani',cat:'grill',ar:'كفتة ضاني',en:'Lamb Kofta',img:IMG.kofta,v:W(['k',850],['h',430],['t',330],['q',220]),tags:['pop'],add:GR}),
  it({id:'kebda',cat:'grill',ar:'كبد وكلاوي',en:'Liver & Kidneys',em:'🍖',v:W(['k',690],['h',350],['q',235]),add:GR}),
- it({id:'steak',cat:'grill',ar:'استيك',en:'Steak',img:IMG.breast,v:W(['k',1380],['h',700],['t',530],['q',360]),tags:['premium'],add:GR}),
+ it({id:'steak',cat:'grill',ar:'استيك',en:'Steak',em:'🥩',v:W(['k',1380],['h',700],['t',530],['q',360]),tags:['premium'],add:GR}),
  it({id:'tarb',cat:'grill',ar:'طرب',en:'Tarb',img:IMG.tarb,v:W(['k',945],['h',485],['t',365],['q',250]),tags:['pop'],add:GR}),
  it({id:'sujuk',cat:'grill',ar:'سجق',en:'Sujuk Sausage',img:IMG.sujuk,v:W(['k',750],['h',380],['t',290],['q',195]),tags:['hot'],add:GR}),
- it({id:'mashkal',cat:'grill',ar:'مشكل (كباب + كفتة)',en:'Kebab & Kofta Mix',img:IMG.tray2,v:W(['k',980],['h',500],['q',255]),add:GR}),
- it({id:'mixgrill',cat:'grill',ar:'ميكس جريل',en:'Mixed Grill',d:{ar:'كباب + كفتة + شيش + طرب',en:'Kebab, kofta, shish & tarb'},img:IMG.tray,v:W(['k',920],['h',470]),tags:['sig'],add:GR}),
- it({id:'nifa',cat:'grill',ar:'نيفة',en:'Nifa (Goat Ribs)',img:IMG.tray2,v:W(['k',980],['h',500],['q',260]),add:GR}),
+ it({id:'mashkal',cat:'grill',ar:'مشكل (كباب + كفتة)',en:'Kebab & Kofta Mix',em:'🍢',v:W(['k',980],['h',500],['q',255]),add:GR}),
+ it({id:'mixgrill',cat:'grill',ar:'ميكس جريل',en:'Mixed Grill',d:{ar:'كباب + كفتة + شيش + طرب',en:'Kebab, kofta, shish & tarb'},em:'🍢',v:W(['k',920],['h',470]),tags:['sig'],add:GR}),
+ it({id:'nifa',cat:'grill',ar:'نيفة',en:'Nifa (Goat Ribs)',em:'🍖',v:W(['k',980],['h',500],['q',260]),add:GR}),
  // chicken grills
  it({id:'shish',cat:'cgrill',ar:'شيش طاووق',en:'Shish Tawook',img:IMG.tikka,v:W(['k',550],['h',280],['t',215],['q',145]),tags:['pop'],add:GR}),
  it({id:'panehg',cat:'cgrill',ar:'بانيه مشوي',en:'Grilled Escalope',img:IMG.breast,v:W(['k',575],['h',300],['q',155]),add:GR}),
@@ -61,7 +61,7 @@ const ITEMS0=[
  it({id:'pigfreek',cat:'pigeon',ar:'حمام محشي فريك',en:'Pigeon Stuffed with Freekeh',em:'🕊️',p:255,f:1,tags:['sig']}),
  it({id:'duck',cat:'pigeon',ar:'بطة',en:'Duck',em:'🦆',v:[V('w','بطة كاملة','Whole',785,3),V('h','نص بطة','Half',405,1.5)]}),
  // mandi lamb
- it({id:'mandilamb',cat:'mandi',ar:'لحمة مندي',en:'Lamb Mandi',img:IMG.whole,v:[V('n','نفر','Single',480,1),V('8','تمن تيس','⅛ Goat',995,2.5),V('4','ربع تيس','¼ Goat',1995,5),V('2','نص تيس','½ Goat',3995,10)],tags:['sig']}),
+ it({id:'mandilamb',cat:'mandi',ar:'لحمة مندي',en:'Lamb Mandi',em:'🍖',v:[V('n','نفر','Single',480,1),V('8','تمن تيس','⅛ Goat',995,2.5),V('4','ربع تيس','¼ Goat',1995,5),V('2','نص تيس','½ Goat',3995,10)],tags:['sig']}),
  // meals
  it({id:'m_paneh',cat:'meals',ar:'وجبة بانيه',en:'Escalope Meal',d:{ar:'فراخ بانيه + بطاطس + مكرونة اسباكيتي',en:'Escalope, fries & spaghetti'},em:'🍱',p:235}),
  it({id:'m_breast',cat:'meals',ar:'وجبة صدور مشوية',en:'Grilled Breast Meal',d:{ar:'صدور مشوية + بطاطس + رز أبيض + خضار سوتيه',en:'Grilled breast, fries, white rice & sautéed veg'},img:IMG.breast,p:230}),
@@ -69,16 +69,16 @@ const ITEMS0=[
  it({id:'m_gamed',cat:'meals',ar:'وجبة الجامد',en:'Gamed Meal',d:{ar:'ربع فرخة + رز + خضار',en:'Quarter chicken, rice & veg'},img:IMG.chickrice,p:190}),
  it({id:'m_dyn',cat:'meals',ar:'وجبة الديناميت',en:'Dynamite Meal',d:{ar:'ربع فرخة + تمن كفتة + رز + خضار',en:'Quarter chicken, ⅛ kofta, rice & veg'},img:IMG.kofta,p:240,tags:['hot']}),
  it({id:'m_single',cat:'meals',ar:'وجبة السنجل',en:'Single Meal',d:{ar:'ربع فرخة + تمن كفتة + رز',en:'Quarter chicken, ⅛ kofta & rice'},img:IMG.kofta,p:225}),
- it({id:'m_kebab',cat:'meals',ar:'وجبة الكباب',en:'Kebab Meal',d:{ar:'تمن كباب + تمن كفتة + تمن شيش + رز',en:'⅛ kebab, ⅛ kofta, ⅛ shish & rice'},img:IMG.tray2,p:360,tags:['premium']}),
+ it({id:'m_kebab',cat:'meals',ar:'وجبة الكباب',en:'Kebab Meal',d:{ar:'تمن كباب + تمن كفتة + تمن شيش + رز',en:'⅛ kebab, ⅛ kofta, ⅛ shish & rice'},em:'🍢',p:360,tags:['premium']}),
  it({id:'tablia',cat:'meals',ar:'طبلية أبو قورة',en:'Abo Qora Tablia',d:{ar:'رز معمر باللحمة + 8 رقاق + طاجن بطاطس باللحمة + فتة كوارع + عكاوي بصل + نص فرخة + بطة روستو + 6 ملوخية + 6 شوربة',en:'Meat ma\'ammar rice, 8 roqaq, potato & meat tagine, trotter fatta, oxtail, half chicken, roast duck, 6 molokhia & 6 soups'},img:IMG.tagine,p:2875,f:6,tags:['sig']}),
- it({id:'shawayaaq',cat:'meals',ar:'شواية أبو قورة',en:'Abo Qora Grill Board',d:{ar:'كباب + كفتة + سجق + طرب + شيش + استيك + صدور + حواوشي',en:'Kebab, kofta, sujuk, tarb, shish, steak, breast & hawawshi'},img:IMG.tray,p:865,f:3,dine:1}),
+ it({id:'shawayaaq',cat:'meals',ar:'شواية أبو قورة',en:'Abo Qora Grill Board',d:{ar:'كباب + كفتة + سجق + طرب + شيش + استيك + صدور + حواوشي',en:'Kebab, kofta, sujuk, tarb, shish, steak, breast & hawawshi'},em:'🔥',p:865,f:3,dine:1}),
  // sandwiches
  ...[['s_kd','كفتة ضاني','Lamb Kofta',115],['s_kk','كفتة كندوز','Veal Kofta',105],['s_hd','حواوشي ضاني','Lamb Hawawshi',115],['s_hk','حواوشي كندوز','Veal Hawawshi',105],['s_kb','كباب','Kebab',175],['s_tr','طرب','Tarb',120],['s_sh','شيش','Shish',95],['s_sj','سجق','Sujuk',105]]
    .map(([id,ar,en,p])=>it({id,cat:'sand',ar:'ساندويتش '+ar,en:en+' Sandwich',em:id.startsWith('s_h')?'🫓':'🥙',p,f:.7,tags:id==='s_hd'?['pop']:[]})),
  // tagines
- ...[['t1','طاجن عكاوي بالبصل','Oxtail & Onion Tagine',405,IMG.okkawi,['sig']],['t2','طاجن عكاوي ورق عنب','Oxtail & Vine Leaves Tagine',425,IMG.okkawi],['t3','طاجن ورق عنب بالكوارع','Vine Leaves & Trotters Tagine',425,IMG.tagine2],['t4','طاجن ملوخية بالكوارع','Molokhia & Trotters Tagine',425,IMG.tagine],
-    ['t5','طاجن لحمة محمرة','Braised Beef Tagine',325,IMG.tagine2,['pop']],['t6','طاجن كرنب باللحمة','Cabbage & Beef Tagine',370],['t7','طاجن لسان عصفور باللحمة','Orzo & Beef Tagine',340],['t8','خضار مشكل باللحمة','Mixed Veg & Beef',330],['t9','لحمة بالبصل','Beef with Onions',315],['t10','لحمة بالبطاطس','Beef with Potatoes',315],
-    ['t11','بامية باللحمة','Okra & Beef',340,IMG.tagine,['pop']],['t12','طاجن سجق','Sujuk Tagine',325,IMG.sujuk],['t13','طاجن ملوخية باللحمة','Molokhia & Beef Tagine',315],['t14','طاجن مسقعة باللحمة المفرومة','Moussaka Tagine',265]]
+ ...[['t1','طاجن عكاوي بالبصل','Oxtail & Onion Tagine',405,IMG.okkawi,['sig']],['t2','طاجن عكاوي ورق عنب','Oxtail & Vine Leaves Tagine',425,IMG.okkawi],['t3','طاجن ورق عنب بالكوارع','Vine Leaves & Trotters Tagine',425,IMG.tagine2],['t4','طاجن ملوخية بالكوارع','Molokhia & Trotters Tagine',425],
+    ['t5','طاجن لحمة محمرة','Braised Beef Tagine',325,null,['pop']],['t6','طاجن كرنب باللحمة','Cabbage & Beef Tagine',370],['t7','طاجن لسان عصفور باللحمة','Orzo & Beef Tagine',340],['t8','خضار مشكل باللحمة','Mixed Veg & Beef',330],['t9','لحمة بالبصل','Beef with Onions',315],['t10','لحمة بالبطاطس','Beef with Potatoes',315],
+    ['t11','بامية باللحمة','Okra & Beef',340,null,['pop']],['t12','طاجن سجق','Sujuk Tagine',325],['t13','طاجن ملوخية باللحمة','Molokhia & Beef Tagine',315],['t14','طاجن مسقعة باللحمة المفرومة','Moussaka Tagine',265]]
    .map(([id,ar,en,p,img,tags])=>it({id,cat:'tagine',ar,en,p,img,em:'🥘',f:1.5,tags:tags||[]})),
  // fatta & skillets
  it({id:'f1',cat:'fatta',ar:'موزة فتة',en:'Lamb Shank Fatta',em:'🍲',p:520,f:1.5,tags:['premium']}),
@@ -134,7 +134,7 @@ const SAWANI0=[
  ['زلزال الأرض','Earthquake',9,2850,'نفر لحم مندي + 3 أرباع فراخ + 3 حمام + ربع شيش + ربع كفتة + ربع طرب + ربع سجق + 4 رقاق + نص كيلو ورق عنب + 2 كيلو رز + سلطات + عيش','Lamb mandi, 3 chicken quarters, 3 pigeons, ¼ shish/kofta/tarb/sujuk, 4 roqaq, ½ kg vine leaves, 2 kg rice, salads & bread'],
  ['أهل الحدائق','Ahl El-Hadayek',10,3210,'5 أرباع فراخ + 5 حمام + 5 صوابع طرب + 5 صوابع كفتة + 5 شيش + 5 سجق + 5 ممبار + محشي مشكل + 3 كيلو رز + سلطات + عيش','5 chicken quarters, 5 pigeons, 5 tarb, 5 kofta, 5 shish, 5 sujuk, 5 mombar, mahshi, 3 kg rice, salads & bread'],
  ['أبو قورة','Abo Qora',12,3795,'كيلو لحم مندي + فرخة مشوية + تلت طرب + تلت كفتة + تلت سجق + تلت ريش + تلت شيش + محشي مشكل + 8 سمبوسة + نص ورق عنب + 2 كيلو رز + سلطات + عيش','1 kg lamb mandi, whole chicken, ⅓ each of tarb, kofta, sujuk, chops & shish, mahshi, 8 sambousek, ½ vine leaves, 2 kg rice, salads & bread'],
-].map(([ar,en,n,p,dar,den],i)=>it({id:'sn'+i,cat:'sawani',ar,en,p,f:n,ppl:n,d:{ar:dar,en:den},img:[IMG.tray,IMG.tray2,IMG.tagine,IMG.tagine2][i%4],add:['nuts'],tags:i===12?['sig']:i===1||i===6?['pop']:[]}));
+].map(([ar,en,n,p,dar,den],i)=>it({id:'sn'+i,cat:'sawani',ar,en,p,f:n,ppl:n,d:{ar:dar,en:den},img:IMG.tray,add:['nuts'],tags:i===12?['sig']:i===1||i===6?['pop']:[]}));
 
 const TAGS={pop:[{ar:'الأكثر طلباً',en:'Popular'},''],sig:[{ar:'توقيع أبو قورة',en:'Signature'},'sand'],premium:[{ar:'بريميوم',en:'Premium'},'teal'],hot:[{ar:'حراق',en:'Spicy'},''],veg:[{ar:'نباتي',en:'Veggie'},'teal']};
 const AREAS0={'حدائق الأهرام':{en:'Hadayek El Ahram',fee:20,eta:30},'الهرم':{en:'Haram',fee:30,eta:40},'فيصل':{en:'Faisal',fee:30,eta:40},'6 أكتوبر':{en:'6th of October',fee:45,eta:50},'الشيخ زايد':{en:'Sheikh Zayed',fee:50,eta:55},'الدقي':{en:'Dokki',fee:45,eta:50},'المهندسين':{en:'Mohandessin',fee:45,eta:50}};
