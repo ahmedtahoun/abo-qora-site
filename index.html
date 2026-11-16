@@ -1006,33 +1006,36 @@ function openAddress(existing,next){
     save();closeSheet();toast(tr('📍 العنوان اتحفظ','📍 Address saved'));refresh();next&&next()};
 }
 
-/* guest checkout — order without a password; offer to save the account afterwards */
+/* checkout without a separate login step: name + phone + password + address on one page.
+   (No SMS/OTP: an existing number needs its password; forgotten passwords are reset by staff.) */
 function renderGuest(){
   const a=blankAddr();let mode=CO.mode||'delivery';
   const draw=()=>{
     $('#checkout').innerHTML=`<div class="page-title"><a href="#/" class="icon-btn back">→</a><h1>${tr('تأكيد الطلب','Checkout')}</h1></div>
     <div class="co"><div><div class="panel"><h2>👋 ${tr('بياناتك عشان نوصّلك','Your details')}</h2>
-      <p class="muted" style="margin:-4px 0 12px">${tr('من غير كلمة سر — هنسجّل طلبك برقم موبايلك.','No password needed — we save your order with your mobile number.')} <button class="link" id="gLogin" type="button">${tr('عندك حساب؟ ادخل','Have an account? Log in')}</button></p>
+      <p class="muted" style="margin:-4px 0 12px">${tr('مرة واحدة بس — وبعد كده هتطلب على طول.','Just once — next time you order straight away.')} <button class="link" id="gLogin" type="button">${tr('عندك حساب؟ ادخل','Have an account? Log in')}</button></p>
       <div class="seg" id="gMode" style="margin-bottom:14px"><button type="button" data-m="delivery" class="${mode==='delivery'?'on':''}">🛵 ${tr('توصيل','Delivery')}</button><button type="button" data-m="pickup" class="${mode==='pickup'?'on':''}">🏃 ${tr('استلام من الفرع','Pickup')}</button></div>
       <div class="field"><label for="gNm">${tr('اسمك','Your name')}</label><input id="gNm" autocomplete="name" value="${esc(a._nm||'')}"></div>
       <div class="field"><label for="gPh">${tr('رقم الموبايل','Mobile number')}</label><input id="gPh" inputmode="tel" maxlength="17" dir="ltr" autocomplete="tel" placeholder="01xxxxxxxxx" value="${esc(a._ph||'')}"></div>
+      ${pwField('gPw',tr('كلمة السر','Password'),tr('6 حروف أو أرقام على الأقل','At least 6 characters'))}<small class="muted" style="display:block;margin:-8px 0 12px">🔒 ${tr('عشان محدش يطلب برقمك، وتتابع طلباتك وتجمع حمام من كل طلب.','So nobody can order with your number — and you can track orders and collect pigeons.')}</small>
       ${mode==='delivery'?`<div class="divider">📍 ${tr('عنوان التوصيل','Delivery address')}</div>${addrFields(a)}`:`<p class="muted">🏪 ${tr('هتستلم من الفرع: كواترو مول · كمبوند المنتزه · حدائق أكتوبر','Pickup from: Quattro Mall · El Montazah · Hadayek October')}</p>`}
       <div id="gErr" style="color:var(--red);font-size:13px;min-height:18px;font-weight:700"></div>
       <button class="btn btn-red" style="width:100%" id="gGo">${tr('كمّل للدفع ←','Continue to payment →')}</button></div></div>
     <div class="panel sticky-side"><h2>🧾 ${tr('طلبك','Your order')}</h2>${S.cart.map(l=>`<div class="sumrow"><span>${l.qty} × ${L(BY[l.id])}</span><span>${money(unit(BY[l.id],l.o)*l.qty)}</span></div>`).join('')}<div class="sumrow total"><span>${tr('الحساب','Subtotal')}</span><span>${money(cartSub())}</span></div></div></div>`;
-    if(mode==='delivery')bindAddr(a);
+    bindEyes();if(mode==='delivery')bindAddr(a);
     const keep=()=>{a._nm=$('#gNm').value;a._ph=$('#gPh').value;if(mode==='delivery'&&$('#ar'))readAddr(a)};
     $('#gMode').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;keep();mode=b.dataset.m;draw()};
     $('#gLogin').onclick=()=>openLogin(()=>renderCheckout(),normPhone($('#gPh').value));
-    $('#gGo').onclick=()=>{const err=$('#gErr'),nm=$('#gNm').value.trim(),p=normPhone($('#gPh').value);
+    $('#gGo').onclick=async()=>{const err=$('#gErr'),nm=$('#gNm').value.trim(),p=normPhone($('#gPh').value),pw=$('#gPw').value;
       if(nm.length<2){err.textContent=tr('اكتب اسمك','Please enter your name');return $('#gNm').focus()}
       if(!phoneOk(p)){err.textContent=tr('اكتب رقم مصري صحيح (11 رقم يبدأ بـ 010/011/012/015)','Enter a valid Egyptian number');return $('#gPh').focus()}
+      if(pw.length<6){err.textContent=tr('كلمة السر لازم تكون 6 حروف أو أرقام على الأقل','Password must be at least 6 characters');return $('#gPw').focus()}
       if(mode==='delivery'){const ae=readAddr(a);if(ae){err.textContent=ae;return}}
-      const ex=S.users[p];
-      if(ex&&ex.pass){toast(tr('الرقم ده عليه حساب — ادخل بكلمة السر','This number has an account — log in'));return openLogin(()=>renderCheckout(),p)}
+      const ex=S.users[p],h=await hashPw(pw);
+      if(ex&&ex.pass&&ex.pass!==h){err.textContent=tr('الرقم ده عليه حساب وكلمة السر مش مظبوطة — جرّب تاني أو كلّم الفرع 17641','This number already has an account and the password is wrong — try again or call 17641');return $('#gPw').select()}
       const addr=mode==='delivery'?(()=>{const x={...a};delete x._nm;delete x._ph;x.id='a'+Date.now();return x})():null;
-      const u=ex||(S.users[p]={name:nm,phone:p,pass:null,guest:true,addresses:[],defaultAddr:null,orders:[],favs:[],lastPay:'cash',createdAt:Date.now(),ref:'AQ'+p.slice(-6),pigeons:0});
-      u.name=nm;if(addr){u.addresses.push(addr);u.defaultAddr=addr.id}
+      const u=ex||(S.users[p]={name:nm,phone:p,pass:h,addresses:[],defaultAddr:null,orders:[],favs:[],lastPay:'cash',createdAt:Date.now(),ref:'AQ'+p.slice(-6),pigeons:0});
+      if(!ex||!ex.pass){u.name=nm;u.pass=h}if(addr){u.addresses.push(addr);u.defaultAddr=addr.id}
       CO.mode=mode;S.session=p;save();refreshHeader();renderCheckout();scrollTo({top:0})};
   };
   draw();
