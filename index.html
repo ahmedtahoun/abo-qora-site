@@ -680,6 +680,7 @@ const BY=Object.fromEntries([...ALL,...M.hiddenAll].map(i=>[i.id,i]));
 const FILTERS=[['all',{ar:'الكل',en:'All'}],['pop',{ar:'🔥 الأكثر طلباً',en:'🔥 Popular'}],['sig',{ar:'⭐ توقيع البيت',en:'⭐ Signature'}],['hot',{ar:'🌶️ حراق',en:'🌶️ Spicy'}],['veg',{ar:'🌿 نباتي',en:'🌿 Veggie'}],['fav',{ar:'❤️ المفضلة',en:'❤️ Favorites'}]];
 const areaName=a=>AR()?a:(AREAS[a]?.en||a);
 const FREE_DELIVERY=CFG.freeDelivery;
+const LOYALTY=false; // pigeons rewards + friend codes hidden until the restaurant launches them
 const me=()=>{const u=S.session?S.users[S.session]:null;if(u){u.pigeons??=0;u.ref??='AQ'+u.phone.slice(-6)}return u};
 
 /* =========================================================
@@ -876,9 +877,7 @@ function renderDrawer(){
     <div class="sumrow"><span class="muted">${tr('الحساب','Subtotal')}</span><span>${money(sub)}</span></div>
     <div class="sumrow"><span class="muted">${tr('التوصيل','Delivery')} ${di.area?'('+areaName(di.area)+')':tr('(تقديري)','(est.)')}</span><span>${left<=0?tr('ببلاش','Free'):money(di.fee)}</span></div>
     <div class="sumrow total"><span>${tr('الإجمالي','Total')}</span><span>${money(sub+(left<=0?0:di.fee))}</span></div>
-    <button class="btn btn-red" style="width:100%;margin-top:12px" id="toCheckout">${tr('كمّل الطلب ←','Checkout →')}</button>
-    <button class="btn btn-ghost" style="width:100%;margin-top:10px;padding:9px" id="shareTray">👨‍👩‍👧‍👦 ${tr('ابعت طلبك للعيلة يزوّدوا عليه','Send your order to family to add to it')}</button></footer>`;
-  $('#shareTray').onclick=openShare;
+    <button class="btn btn-red" style="width:100%;margin-top:12px" id="toCheckout">${tr('كمّل الطلب ←','Checkout →')}</button></footer>`;
   $$('[data-k]',d).forEach(b=>b.onclick=()=>{setQty(b.dataset.k,+b.dataset.d);renderDrawer()});
   $$('[data-up]',d).forEach(b=>b.onclick=()=>{const item=BY[b.dataset.up];addToCart(item.id,item.v?{v:cheapV(item)}:{},1);renderDrawer();toast(L(item)+' ✓')});
   $('#toCheckout').onclick=()=>{closeAll();goCheckout()};bindClose();
@@ -960,7 +959,7 @@ function openLogin(next,prePhone){
     $('#sheet').innerHTML=`${H2(tr('حساب جديد ✨','Create your account ✨'))}<p class="muted" style="margin:4px 0 16px">${tr('الرقم','The number')} <b dir="ltr">${p}</b> ${tr('مش متسجل عندنا — املا البيانات دي مرة واحدة ومش هتكررها تاني.','isn\'t registered yet — fill this in once and never again.')} <button class="link" id="chg">${tr('تغيير الرقم','Change')}</button></p>
       <div class="field"><label for="nm">${tr('اسمك','Your name')}</label><input id="nm" autocomplete="name" placeholder="${tr('الاسم اللي الطيار هيناديك بيه','The name the rider will ask for')}"></div>
       ${pwField('pw1',tr('كلمة السر','Password'),tr('6 حروف أو أرقام على الأقل','At least 6 characters'))}${pwField('pw2',tr('أكّد كلمة السر','Confirm password'))}
-      <div class="field"><label for="refc">🎁 ${tr('كود صاحبك (اختياري)','Friend\'s code (optional)')}</label><input id="refc" dir="ltr" placeholder="AQ123456" style="text-transform:uppercase"><small class="muted">${tr(`لو صاحبك بعتلك كود، إنتو الاتنين تاخدوا ${REF_GIFT} حمامة`,`If a friend sent you a code, you both get ${REF_GIFT} pigeons`)}</small></div>
+      ${LOYALTY?`<div class="field"><label for="refc">🎁 ${tr('كود صاحبك (اختياري)','Friend\'s code (optional)')}</label><input id="refc" dir="ltr" placeholder="AQ123456" style="text-transform:uppercase"><small class="muted">${tr(`لو صاحبك بعتلك كود، إنتو الاتنين تاخدوا ${REF_GIFT} حمامة`,`If a friend sent you a code, you both get ${REF_GIFT} pigeons`)}</small></div>`:''}
       <div class="divider">📍 ${tr('عنوان التوصيل','Delivery address')}</div>${addrFields(a)}
       <div id="authErr" style="color:var(--red);font-size:13px;min-height:18px;font-weight:700"></div>
       <button class="btn btn-red" style="width:100%" id="suGo">${tr('اعمل الحساب ويلا نطلب','Create account & order')}</button>`;
@@ -969,7 +968,7 @@ function openLogin(next,prePhone){
       if(nm.length<2){err.textContent=tr('اكتب اسمك','Please enter your name');return $('#nm').focus()}
       if(p1.length<6){err.textContent=tr('كلمة السر لازم تكون 6 حروف أو أرقام على الأقل','Password must be at least 6 characters');return $('#pw1').focus()}
       if(p1!==p2){err.textContent=tr('كلمة السر والتأكيد مش زي بعض','Passwords don\'t match');return $('#pw2').focus()}
-      const code=$('#refc').value.trim().toUpperCase(),referrer=code?Object.values(S.users).find(x=>(x.ref||'AQ'+x.phone.slice(-6))===code):null;
+      const code=LOYALTY&&$('#refc')?$('#refc').value.trim().toUpperCase():'',referrer=code?Object.values(S.users).find(x=>(x.ref||'AQ'+x.phone.slice(-6))===code):null;
       if(code&&!referrer){err.textContent=tr('الكود ده مش موجود — اتأكد منه أو امسحه','That friend code doesn\'t exist — check it or clear it');return $('#refc').focus()}
       const ae=readAddr(a);if(ae){err.textContent=ae;return}
       a.id='a'+Date.now();
@@ -1017,7 +1016,7 @@ function renderGuest(){
       <div class="seg" id="gMode" style="margin-bottom:14px"><button type="button" data-m="delivery" class="${mode==='delivery'?'on':''}">🛵 ${tr('توصيل','Delivery')}</button><button type="button" data-m="pickup" class="${mode==='pickup'?'on':''}">🏃 ${tr('استلام من الفرع','Pickup')}</button></div>
       <div class="field"><label for="gNm">${tr('اسمك','Your name')}</label><input id="gNm" autocomplete="name" value="${esc(a._nm||'')}"></div>
       <div class="field"><label for="gPh">${tr('رقم الموبايل','Mobile number')}</label><input id="gPh" inputmode="tel" maxlength="17" dir="ltr" autocomplete="tel" placeholder="01xxxxxxxxx" value="${esc(a._ph||'')}"></div>
-      ${pwField('gPw',tr('كلمة السر','Password'),tr('6 حروف أو أرقام على الأقل','At least 6 characters'))}<small class="muted" style="display:block;margin:-8px 0 12px">🔒 ${tr('عشان محدش يطلب برقمك، وتتابع طلباتك وتجمع حمام من كل طلب.','So nobody can order with your number — and you can track orders and collect pigeons.')}</small>
+      ${pwField('gPw',tr('كلمة السر','Password'),tr('6 حروف أو أرقام على الأقل','At least 6 characters'))}<small class="muted" style="display:block;margin:-8px 0 12px">🔒 ${tr('عشان محدش يطلب برقمك، وتتابع طلباتك.','So nobody can order with your number — and you can track your orders.')}</small>
       ${mode==='delivery'?`<div class="divider">📍 ${tr('عنوان التوصيل','Delivery address')}</div>${addrFields(a)}`:`<p class="muted">🏪 ${tr('هتستلم من الفرع: كواترو مول · كمبوند المنتزه · حدائق أكتوبر','Pickup from: Quattro Mall · El Montazah · Hadayek October')}</p>`}
       <div id="gErr" style="color:var(--red);font-size:13px;min-height:18px;font-weight:700"></div>
       <button class="btn btn-red" style="width:100%" id="gGo">${tr('كمّل للدفع ←','Continue to payment →')}</button></div></div>
@@ -1041,7 +1040,7 @@ function renderGuest(){
   draw();
 }
 function openSaveAccount(){const u=me();if(!u||u.pass)return;
-  openSheet(`${H2(tr('احفظ حسابك 🔒','Save your account 🔒'))}<p class="muted" style="margin:4px 0 14px">${tr('اختار كلمة سر عشان تتابع طلباتك، تطلب تاني بضغطة، وتجمع حمام 🕊️ من كل طلب.','Pick a password to track orders, reorder in one tap and collect pigeons 🕊️.')}</p>
+  openSheet(`${H2(tr('احفظ حسابك 🔒','Save your account 🔒'))}<p class="muted" style="margin:4px 0 14px">${tr('اختار كلمة سر عشان تتابع طلباتك وتطلب تاني بضغطة.','Pick a password to track orders and reorder in one tap.')}</p>
     ${pwField('sv1',tr('كلمة السر','Password'),tr('6 حروف أو أرقام على الأقل','At least 6 characters'))}${pwField('sv2',tr('أكّد كلمة السر','Confirm password'))}
     <div id="svErr" style="color:var(--red);font-size:13px;min-height:18px;font-weight:700"></div>
     <button class="btn btn-red" style="width:100%" id="svGo">${tr('احفظ حسابي','Save my account')}</button><button class="btn btn-ghost" style="width:100%;margin-top:10px" id="svLater">${tr('بعدين','Later')}</button>`);
@@ -1068,7 +1067,7 @@ function nextOpenLabel(){const n=nextOpenAfter(Date.now(),CFG.hours);return n?fm
 const leadFor=sub=>sub>=CFG.bigOrder?CFG.bigLeadMin:CFG.leadMin;
 const hoursAr=min=>{const h=min/60;return h===1?'ساعة':h===2?'ساعتين':h%1?min+' دقيقة':h<=10?h+' ساعات':h+' ساعة'};
 function totals(){const sub=cartSub(),di=deliveryInfo(),fee=CO.mode==='pickup'||sub>=FREE_DELIVERY?0:di.fee,disc=Math.round(sub*CO.disc);
-  const bal=me()?.pigeons||0,pgMax=Math.min(Math.floor(bal*PG_RATE),Math.floor((sub-disc)*CFG.pgCap)),pgVal=CO.usePg?pgMax:0,pgUsed=Math.ceil(pgVal/PG_RATE);
+  const bal=LOYALTY?me()?.pigeons||0:0,pgMax=Math.min(Math.floor(bal*PG_RATE),Math.floor((sub-disc)*CFG.pgCap)),pgVal=CO.usePg?pgMax:0,pgUsed=Math.ceil(pgVal/PG_RATE);
   return{sub,fee,disc,pgMax,pgVal,pgUsed,total:sub+fee-disc-pgVal,eta:CO.mode==='pickup'?25+(CFG.busyExtra||0):di.eta}}
 function renderCheckout(){
   const u=me();if(!u){if(cartCount())renderGuest();else location.hash='#/';return}
@@ -1111,7 +1110,7 @@ function renderCheckout(){
     <div class="sumrow"><span class="muted">${tr('الحساب','Subtotal')}</span><span>${money(T.sub)}</span></div>
     <div class="sumrow"><span class="muted">${tr('التوصيل','Delivery')}</span><span>${T.fee?money(T.fee):`<span style="color:var(--green);font-weight:800">${tr('ببلاش','Free')}</span>`}</span></div>
     ${T.disc?`<div class="sumrow" style="color:var(--green);font-weight:800"><span>${tr('خصم','Discount')} ${esc(CO.promo)}</span><span>− ${money(T.disc)}</span></div>`:''}
-    ${T.pgMax>0?`<div class="pg-toggle ${CO.usePg?'on':''}" id="pgT"><span class="sw"></span><span style="flex:1">🕊️ ${tr(`استخدم ${Math.ceil(T.pgMax/PG_RATE)} حمامة من رصيدك (${u.pigeons})`,`Use ${Math.ceil(T.pgMax/PG_RATE)} of your ${u.pigeons} pigeons`)}</span><b>− ${money(T.pgMax)}</b></div>`:`<div class="secure">🕊️ ${tr(`هتكسب ${Math.floor(T.total/10)} حمامة من الطلب ده`,`You'll earn ${Math.floor(T.total/10)} pigeons on this order`)}</div>`}
+    ${!LOYALTY?'':T.pgMax>0?`<div class="pg-toggle ${CO.usePg?'on':''}" id="pgT"><span class="sw"></span><span style="flex:1">🕊️ ${tr(`استخدم ${Math.ceil(T.pgMax/PG_RATE)} حمامة من رصيدك (${u.pigeons})`,`Use ${Math.ceil(T.pgMax/PG_RATE)} of your ${u.pigeons} pigeons`)}</span><b>− ${money(T.pgMax)}</b></div>`:`<div class="secure">🕊️ ${tr(`هتكسب ${Math.floor(T.total/10)} حمامة من الطلب ده`,`You'll earn ${Math.floor(T.total/10)} pigeons on this order`)}</div>`}
     <div class="sumrow total"><span>${tr('الإجمالي','Total')}</span><span>${money(T.total)}</span></div>
     <div id="coErr" style="color:var(--red);font-size:13px;min-height:18px;margin-top:6px;font-weight:700"></div>
     <button class="btn btn-red" style="width:100%;padding:16px;font-size:17px" id="placeOrder">${CO.pay==='cash'?tr('اطلب دلوقتي','Place order'):tr('ادفع واطلب','Pay & order')} · ${money(T.total)}</button>
@@ -1176,7 +1175,7 @@ function finalize(paid){
   const note=($('#rnote')?.value??CO.riderNote).trim();
   S.cart.forEach(l=>{l.price=unit(BY[l.id],l.o);if(l.o.offer&&!offerLive(l.o))delete l.o.offer});
   const o={id:'AQ-'+Math.floor(1000+Math.random()*9000),at:Date.now(),lines:JSON.parse(JSON.stringify(S.cart)),...T,mode:CO.mode,pay:CO.pay,paid:!!paid,addr,time:CO.time==='asap'?null:fmtSlot(CO.slot),when:CO.time==='asap'?null:CO.slot,rating:0,
-    riderNote:note,kitchenNote:u.kitchenNote||'',pgEarned:Math.floor(T.total/10)};
+    riderNote:note,kitchenNote:u.kitchenNote||'',pgEarned:LOYALTY?Math.floor(T.total/10):0};
   if(CO.saveNote)u.riderNote=note;
   u.pigeons=Math.max(0,(u.pigeons||0)-T.pgUsed+o.pgEarned);
   const why=[];if(CFG.confirmFirstCash&&first&&CO.pay==='cash')why.push('أول طلب للعميل وكاش');if(CFG.confirmAbove&&T.total>=CFG.confirmAbove)why.push(`طلب كبير (${waMoney(T.total)})`);
@@ -1187,7 +1186,7 @@ function finalize(paid){
   if(WA.notifyRestaurant)msgs.push({to:WA.restaurant,toName:'المطعم',kind:'restaurant',orderId:o.id,text:waOrderSummary(o,u,BY)});
   if(WA.confirmCustomer)msgs.push({to:u.phone,toName:u.name,kind:'customer',orderId:o.id,text:waCustomerConfirm(o,u,BY,S.lang)});
   if(msgs.length){pushWA(msgs);o.wa=msgs.map(m=>m.kind);save()}
-  setTimeout(()=>toast(tr(`🕊️ كسبت ${o.pgEarned} حمامة`,`🕊️ You earned ${o.pgEarned} pigeons`)),600);
+  if(o.pgEarned)setTimeout(()=>toast(tr(`🕊️ كسبت ${o.pgEarned} حمامة`,`🕊️ You earned ${o.pgEarned} pigeons`)),600);
 }
 
 /* =========================================================
@@ -1308,8 +1307,8 @@ function renderProfile(){
   const done=u.orders.filter(o=>o.status!=='cancelled'),spent=done.reduce((s,o)=>s+o.total,0),pg=u.pigeons||0;
   $('#profile').innerHTML=`<div class="prof-head"><div class="avatar">${esc(u.name[0])}</div><div style="flex:1"><h1 style="font-size:34px;color:var(--brown)">${esc(u.name)}</h1><div class="muted" dir="ltr" style="text-align:start;font-weight:700">${u.phone}</div></div><button class="btn btn-ghost" id="logout">${tr('خروج','Log out')}</button></div>
   <div class="stats">
-    <div class="stat"><div class="em">🕊️</div><div style="flex:1"><h3>${pg} ${tr('حمامة','pigeons')}</h3><p>${tr(`= ${money(pg*PG_RATE)} تخصمها من أي طلب · كل 10 ج بحمامة`,`= ${money(pg*PG_RATE)} off any order · 1 pigeon per EGP 10`)}</p></div></div>
-    <div class="stat"><div class="em">🎁</div><div style="flex:1"><h3>${tr('ادعي صاحبك','Invite a friend')}</h3><p>${tr(`كودك <b dir="ltr">${u.ref}</b> — إنتو الاتنين تاخدوا ${REF_GIFT} حمامة`,`Your code <b>${u.ref}</b> — you both get ${REF_GIFT} pigeons`)}</p><a class="chip" style="margin-top:6px" target="_blank" rel="noopener" href="${shareRef(u)}">🟢 ${tr('ابعته على واتساب','Send on WhatsApp')}</a></div></div>
+    ${LOYALTY?`<div class="stat"><div class="em">🕊️</div><div style="flex:1"><h3>${pg} ${tr('حمامة','pigeons')}</h3><p>${tr(`= ${money(pg*PG_RATE)} تخصمها من أي طلب · كل 10 ج بحمامة`,`= ${money(pg*PG_RATE)} off any order · 1 pigeon per EGP 10`)}</p></div></div>
+    <div class="stat"><div class="em">🎁</div><div style="flex:1"><h3>${tr('ادعي صاحبك','Invite a friend')}</h3><p>${tr(`كودك <b dir="ltr">${u.ref}</b> — إنتو الاتنين تاخدوا ${REF_GIFT} حمامة`,`Your code <b>${u.ref}</b> — you both get ${REF_GIFT} pigeons`)}</p><a class="chip" style="margin-top:6px" target="_blank" rel="noopener" href="${shareRef(u)}">🟢 ${tr('ابعته على واتساب','Send on WhatsApp')}</a></div></div>`:''}
     <div class="stat"><div class="em">🧾</div><div><h3>${done.length} ${tr('طلب',done.length===1?'order':'orders')}</h3><p>${tr('إجمالي','Total')} ${money(spent)}</p></div></div></div>
   <div class="tabs">${[['orders',tr('🧾 طلباتي','🧾 Orders')],['addr',tr('📍 عناويني','📍 Addresses')],['favs',tr('❤️ المفضلة','❤️ Favorites')],['settings',tr('⚙️ بياناتي','⚙️ My details')]].map(([k,l])=>`<button class="chip ${pTab===k?'on':''}" data-t="${k}">${l}</button>`).join('')}</div><div id="pBody"></div>`;
   const b=$('#pBody');b.onclick=null;
