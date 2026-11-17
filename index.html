@@ -651,7 +651,7 @@ footer.site img{width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)}
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true"></aside>
 <div class="toast" id="toast"></div>
 
-<script src="data.js?v=9"></script>
+<script src="data.js?v=10"></script>
 <script src="kids.js?v=1"></script>
 <script>
 /* =========================================================
@@ -679,7 +679,9 @@ const ALL=[...SAWANI,...ITEMS];
 const BY=Object.fromEntries([...ALL,...M.hiddenAll].map(i=>[i.id,i]));
 const FILTERS=[['all',{ar:'الكل',en:'All'}],['pop',{ar:'🔥 الأكثر طلباً',en:'🔥 Popular'}],['sig',{ar:'⭐ توقيع البيت',en:'⭐ Signature'}],['hot',{ar:'🌶️ حراق',en:'🌶️ Spicy'}],['veg',{ar:'🌿 نباتي',en:'🌿 Veggie'}],['fav',{ar:'❤️ المفضلة',en:'❤️ Favorites'}]];
 const areaName=a=>AR()?a:(AREAS[a]?.en||a);
-const FREE_DELIVERY=CFG.freeDelivery;
+const FREE_DELIVERY=CFG.freeDelivery,FREE_MAX=CFG.freeDeliveryMaxFee??45;
+// free delivery above the threshold only covers areas up to FREE_MAX — far areas (e.g. October 230) keep their fee
+const freeFor=(sub,fee)=>FREE_DELIVERY>0&&sub>=FREE_DELIVERY&&fee<=FREE_MAX;
 const LOYALTY=false; // pigeons rewards + friend codes hidden until the restaurant launches them
 const me=()=>{const u=S.session?S.users[S.session]:null;if(u){u.pigeons??=0;u.ref??='AQ'+u.phone.slice(-6)}return u};
 
@@ -864,7 +866,7 @@ function upsells(){
   return out.slice(0,3);
 }
 function renderDrawer(){
-  const d=$('#drawer'),n=cartCount(),sub=cartSub(),di=deliveryInfo(),left=FREE_DELIVERY-sub;
+  const d=$('#drawer'),n=cartCount(),sub=cartSub(),di=deliveryInfo(),far=di.fee>FREE_MAX,left=FREE_DELIVERY-sub;
   const head=`<header><h2 style="font-size:30px;color:var(--brown)">${tr('طلبك','Your order')} ${n?`<span class="muted" style="font-size:16px;font-family:Cairo">(${n})</span>`:''}</h2><button class="icon-btn" data-close>✕</button></header>`;
   if(!n){d.innerHTML=head+`<div class="body" style="display:grid;place-items:center;text-align:center"><div><div class="tray" style="width:130px;height:130px;margin:0 auto 14px"></div><h3 style="font-size:26px;color:var(--brown)">${tr('طلبك لسه فاضي','Your order is still empty')}</h3><p class="muted">${tr('اختار من المنيو وابدأ املاها.','Pick something from the menu to start.')}</p><button class="btn btn-red" data-close>${tr('يلا نختار','Let\'s pick')}</button></div></div>`;bindClose();return}
   const ups=upsells(),[sl,ss]=satiety(cartFeeds());
@@ -872,11 +874,11 @@ function renderDrawer(){
     <div class="meter" style="margin-bottom:6px"><div class="lbl"><span>${sl}</span><span class="muted">${ss}</span></div><div class="bar" style="background:var(--line)"><i style="width:${Math.min(100,cartFeeds()/10*100)}%"></i></div></div>
     ${S.cart.map(l=>{const item=BY[l.id];return`<div class="line">${pic(item)}<div class="info"><b>${L(item)}</b><small>${l.o.offer?(offerLive(l.o)?`<span class="tag">🏷️ ${tr('بسعر العرض','Offer price')}</span> `:`<span class="tag gray">${tr('العرض خلص — بالسعر العادي','Offer ended — regular price')}</span> `):''}${esc(optSummary(item,l.o))||'&nbsp;'}</small><small style="color:var(--brown);font-weight:800">${money(unit(item,l.o)*l.qty)}${offerLive(l.o)?`<span class="strike">${money((basePrice(item,l.o)+(l.o.add||[]).reduce((s,a)=>s+ADD[a].p,0))*l.qty)}</span>`:''}</small></div><div class="stepper"><button data-k="${esc(l.k)}" data-d="1">+</button><b>${l.qty}</b><button data-k="${esc(l.k)}" data-d="-1">${l.qty===1?'🗑':'−'}</button></div></div>`}).join('')}
     ${ups.length?`<div class="upsell"><b>${tr('ناقصك حاجة؟ 🤔','Missing something? 🤔')}</b><div class="muted" style="font-size:13px">${tr('أغلب اللي طلبوا زيك ضافوا:','People who ordered like you added:')}</div><div class="chips">${ups.map(id=>`<button class="chip" data-up="${id}">${BY[id].em||'➕'} ${L(BY[id])} · ${fromPrice(BY[id])}</button>`).join('')}</div></div>`:''}
-    ${sub<CFG.minOrder?`<div class="upsell" style="border-color:var(--red)">🛵 ${tr(`أقل طلب للتوصيل ${money(CFG.minOrder)} — فاضلك ${money(CFG.minOrder-sub)}`,`Minimum for delivery is ${money(CFG.minOrder)} — add ${money(CFG.minOrder-sub)}`)}</div>`:''}<div style="margin-top:12px;font-size:13px;font-weight:700">${left>0?`🛵 ${tr('فاضلك','Add')} <b>${money(left)}</b> ${tr('وتوصيلك يبقى ببلاش','more for free delivery')}`:`<span style="color:var(--green)">🎉 ${tr('مبروك! التوصيل علينا','Free delivery unlocked')}</span>`}<div class="progress"><i style="width:${Math.min(100,sub/FREE_DELIVERY*100)}%"></i></div></div>
+    ${sub<CFG.minOrder?`<div class="upsell" style="border-color:var(--red)">🛵 ${tr(`أقل طلب للتوصيل ${money(CFG.minOrder)} — فاضلك ${money(CFG.minOrder-sub)}`,`Minimum for delivery is ${money(CFG.minOrder)} — add ${money(CFG.minOrder-sub)}`)}</div>`:''}<div style="margin-top:12px;font-size:13px;font-weight:700">${far?`<span class="muted">🛵 ${tr(`التوصيل ببلاش للمناطق اللي رسومها لحد ${money(FREE_MAX)}`,`Free delivery covers areas up to ${money(FREE_MAX)} delivery`)}</span>`:left>0?`🛵 ${tr('فاضلك','Add')} <b>${money(left)}</b> ${tr('وتوصيلك يبقى ببلاش','more for free delivery')}`:`<span style="color:var(--green)">🎉 ${tr('مبروك! التوصيل علينا','Free delivery unlocked')}</span>`}${far?'':`<div class="progress"><i style="width:${Math.min(100,sub/FREE_DELIVERY*100)}%"></i></div>`}</div>
   </div><footer>
     <div class="sumrow"><span class="muted">${tr('الحساب','Subtotal')}</span><span>${money(sub)}</span></div>
-    <div class="sumrow"><span class="muted">${tr('التوصيل','Delivery')} ${di.area?'('+areaName(di.area)+')':tr('(تقديري)','(est.)')}</span><span>${left<=0?tr('ببلاش','Free'):money(di.fee)}</span></div>
-    <div class="sumrow total"><span>${tr('الإجمالي','Total')}</span><span>${money(sub+(left<=0?0:di.fee))}</span></div>
+    <div class="sumrow"><span class="muted">${tr('التوصيل','Delivery')} ${di.area?'('+areaName(di.area)+')':tr('(تقديري)','(est.)')}</span><span>${freeFor(sub,di.fee)?tr('ببلاش','Free'):money(di.fee)}</span></div>
+    <div class="sumrow total"><span>${tr('الإجمالي','Total')}</span><span>${money(sub+(freeFor(sub,di.fee)?0:di.fee))}</span></div>
     <button class="btn btn-red" style="width:100%;margin-top:12px" id="toCheckout">${tr('كمّل الطلب ←','Checkout →')}</button></footer>`;
   $$('[data-k]',d).forEach(b=>b.onclick=()=>{setQty(b.dataset.k,+b.dataset.d);renderDrawer()});
   $$('[data-up]',d).forEach(b=>b.onclick=()=>{const item=BY[b.dataset.up];addToCart(item.id,item.v?{v:cheapV(item)}:{},1);renderDrawer();toast(L(item)+' ✓')});
@@ -987,12 +989,20 @@ const LBL={'home':{ar:'البيت',en:'Home',ic:'🏠'},'work':{ar:'الشغل',
 const addrLine=a=>tr(`${a.street}، عمارة ${a.building}${a.floor?'، دور '+a.floor:''}${a.apt?'، شقة '+a.apt:''} — ${a.area}`,`${a.street}, Bldg ${a.building}${a.floor?', Floor '+a.floor:''}${a.apt?', Apt '+a.apt:''} — ${areaName(a.area)}`);
 const blankAddr=()=>({label:'home',area:'',street:'',building:'',floor:'',apt:'',landmark:''});
 const addrFields=a=>`<div class="field"><span class="flabel">${tr('اسم العنوان','Label')}</span><div class="seg" id="lbl">${Object.entries(LBL).map(([k,v])=>`<button type="button" data-v="${k}" class="${a.label===k?'on':''}">${v.ic} ${L(v)}</button>`).join('')}</div></div>
-  <div class="field"><label for="ar">${tr('المنطقة','Area')}</label><select id="ar"><option value="">${tr('اختار المنطقة','Choose area')}</option>${Object.entries(AREAS).map(([k,v])=>`<option ${a.area===k?'selected':''} value="${k}">${areaName(k)} — ${tr('توصيل','delivery')} ${v.fee} · ~${v.eta} ${tr('د','min')}</option>`).join('')}</select></div>
+  <div class="field"><label for="ar">${tr('المنطقة','Area')}</label><input id="arq" type="search" enterkeyhint="search" autocomplete="off" placeholder="${tr('🔎 اكتب اسم منطقتك أو الكمبوند','🔎 Type your area or compound')}" style="margin-bottom:8px"><select id="ar"><option value="">${tr('اختار المنطقة','Choose area')}</option>${Object.entries(AREAS).sort((x,y)=>x[1].fee-y[1].fee||(x[1].code||0)-(y[1].code||0)).map(([k,v])=>`<option ${a.area===k?'selected':''} value="${k}">${areaName(k)} — ${tr('توصيل','delivery')} ${v.fee} · ~${v.eta} ${tr('د','min')}</option>`).join('')}</select></div>
   <div class="field"><label for="st">${tr('الشارع','Street')}</label><input id="st" value="${esc(a.street)}" autocomplete="address-line1"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px"><div class="field"><label for="bd">${tr('عمارة','Building')}</label><input id="bd" value="${esc(a.building)}"></div><div class="field"><label for="fl">${tr('دور','Floor')}</label><input id="fl" value="${esc(a.floor)}"></div><div class="field"><label for="ap">${tr('شقة','Apt')}</label><input id="ap" value="${esc(a.apt)}"></div></div>
   <div class="field"><button type="button" class="btn btn-ghost" id="gps" style="width:100%">📍 ${a.lat?tr('✓ موقعك متسجل — حدّثه','✓ Location saved — update'):tr('حدد موقعي على الخريطة (بيساعد الطيار)','Use my location (helps the rider)')}</button><small class="muted" id="gpsMsg"></small></div>
   <div class="field"><label for="lm">${tr('علامة مميزة','Landmark')}</label><input id="lm" value="${esc(a.landmark)}" placeholder="${tr('مثلاً: جنب صيدلية الشفا، قدام الجامع','Next to the pharmacy, opposite the mosque...')}"></div>`;
-const bindAddr=a=>{$('#gps')&&($('#gps').onclick=()=>{if(!navigator.geolocation)return $('#gpsMsg').textContent=tr('المتصفح مش بيدعم تحديد الموقع','Location not supported');$('#gpsMsg').textContent=tr('بنحدد موقعك...','Locating...');navigator.geolocation.getCurrentPosition(p=>{a.lat=+p.coords.latitude.toFixed(6);a.lng=+p.coords.longitude.toFixed(6);$('#gps').textContent='✓ '+tr('موقعك اتسجل','Location saved');$('#gpsMsg').textContent=`${a.lat}, ${a.lng}`},()=>{$('#gpsMsg').textContent=tr('مقدرناش نحدد الموقع — اسمح للمتصفح أو اكتب علامة مميزة','Couldn\'t get location — allow access or add a landmark')},{enableHighAccuracy:true,timeout:10000})});$('#lbl').onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;a.label=b.dataset.v;$$('#lbl button').forEach(x=>x.classList.toggle('on',x===b))}};
+const normA=x=>String(x).toLowerCase().replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').trim();
+// 110 areas: filter the list as they type; one match left → pick it
+const showAreaFee=()=>{const el=$('#gFee'),v=$('#ar')?.value;if(!el)return;const ar=AREAS[v],sub=cartSub();
+  el.innerHTML=ar?`<span class="muted">${tr('التوصيل','Delivery')} (${areaName(v)})</span><span>${freeFor(sub,ar.fee)?tr('ببلاش','Free'):money(ar.fee)}</span>`:`<span class="muted">${tr('التوصيل','Delivery')}</span><span class="muted">${tr('اختار منطقتك','Pick your area')}</span>`};
+const bindAreaSearch=()=>{const q=$('#arq'),sel=$('#ar');if(!q||!sel)return;sel.addEventListener('change',showAreaFee);const all=[...sel.options].slice(1).map(o=>({v:o.value,t:o.textContent,en:AREAS[o.value]?.en||''}));
+  q.oninput=()=>{const n=normA(q.value),keep=sel.value,hits=n?all.filter(o=>normA(o.v+' '+o.en).includes(n)):all;
+    sel.innerHTML=`<option value="">${hits.length?tr('اختار المنطقة','Choose area')+` (${hits.length})`:tr('مش لاقيين المنطقة — كلّمنا 17641','Not found — call 17641')}</option>`+hits.map(o=>`<option value="${esc(o.v)}">${esc(o.t)}</option>`).join('');
+    if(hits.length===1&&n.length>=3)sel.value=hits[0].v;else if(hits.some(o=>o.v===keep))sel.value=keep;showAreaFee()};showAreaFee()};
+const bindAddr=a=>{bindAreaSearch();$('#gps')&&($('#gps').onclick=()=>{if(!navigator.geolocation)return $('#gpsMsg').textContent=tr('المتصفح مش بيدعم تحديد الموقع','Location not supported');$('#gpsMsg').textContent=tr('بنحدد موقعك...','Locating...');navigator.geolocation.getCurrentPosition(p=>{a.lat=+p.coords.latitude.toFixed(6);a.lng=+p.coords.longitude.toFixed(6);$('#gps').textContent='✓ '+tr('موقعك اتسجل','Location saved');$('#gpsMsg').textContent=`${a.lat}, ${a.lng}`},()=>{$('#gpsMsg').textContent=tr('مقدرناش نحدد الموقع — اسمح للمتصفح أو اكتب علامة مميزة','Couldn\'t get location — allow access or add a landmark')},{enableHighAccuracy:true,timeout:10000})});$('#lbl').onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;a.label=b.dataset.v;$$('#lbl button').forEach(x=>x.classList.toggle('on',x===b))}};
 const readAddr=a=>{Object.assign(a,{area:$('#ar').value,street:$('#st').value.trim(),building:$('#bd').value.trim(),floor:$('#fl').value.trim(),apt:$('#ap').value.trim(),landmark:$('#lm').value.trim()});
   return(!a.area||!a.street||!a.building)?tr('محتاجين المنطقة والشارع ورقم العمارة على الأقل','Area, street and building are required'):''};
 function openAddress(existing,next){
@@ -1020,7 +1030,7 @@ function renderGuest(){
       ${mode==='delivery'?`<div class="divider">📍 ${tr('عنوان التوصيل','Delivery address')}</div>${addrFields(a)}`:`<p class="muted">🏪 ${tr('هتستلم من الفرع: كواترو مول · كمبوند المنتزه · حدائق أكتوبر','Pickup from: Quattro Mall · El Montazah · Hadayek October')}</p>`}
       <div id="gErr" style="color:var(--red);font-size:13px;min-height:18px;font-weight:700"></div>
       <button class="btn btn-red" style="width:100%" id="gGo">${tr('كمّل للدفع ←','Continue to payment →')}</button></div></div>
-    <div class="panel sticky-side"><h2>🧾 ${tr('طلبك','Your order')}</h2>${S.cart.map(l=>`<div class="sumrow"><span>${l.qty} × ${L(BY[l.id])}</span><span>${money(unit(BY[l.id],l.o)*l.qty)}</span></div>`).join('')}<div class="sumrow total"><span>${tr('الحساب','Subtotal')}</span><span>${money(cartSub())}</span></div></div></div>`;
+    <div class="panel sticky-side"><h2>🧾 ${tr('طلبك','Your order')}</h2>${S.cart.map(l=>`<div class="sumrow"><span>${l.qty} × ${L(BY[l.id])}</span><span>${money(unit(BY[l.id],l.o)*l.qty)}</span></div>`).join('')}<div class="sumrow total"><span>${tr('الحساب','Subtotal')}</span><span>${money(cartSub())}</span></div>${mode==='delivery'?'<div class="sumrow" id="gFee"></div>':''}</div></div>`;
     bindEyes();if(mode==='delivery')bindAddr(a);
     const keep=()=>{a._nm=$('#gNm').value;a._ph=$('#gPh').value;if(mode==='delivery'&&$('#ar'))readAddr(a)};
     $('#gMode').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;keep();mode=b.dataset.m;draw()};
@@ -1066,7 +1076,7 @@ const openNow=()=>CFG.open&&!!shiftAt(Date.now(),CFG.hours);
 function nextOpenLabel(){const n=nextOpenAfter(Date.now(),CFG.hours);return n?fmtSlot(n):''}
 const leadFor=sub=>sub>=CFG.bigOrder?CFG.bigLeadMin:CFG.leadMin;
 const hoursAr=min=>{const h=min/60;return h===1?'ساعة':h===2?'ساعتين':h%1?min+' دقيقة':h<=10?h+' ساعات':h+' ساعة'};
-function totals(){const sub=cartSub(),di=deliveryInfo(),fee=CO.mode==='pickup'||sub>=FREE_DELIVERY?0:di.fee,disc=Math.round(sub*CO.disc);
+function totals(){const sub=cartSub(),di=deliveryInfo(),fee=CO.mode==='pickup'||freeFor(sub,di.fee)?0:di.fee,disc=Math.round(sub*CO.disc);
   const bal=LOYALTY?me()?.pigeons||0:0,pgMax=Math.min(Math.floor(bal*PG_RATE),Math.floor((sub-disc)*CFG.pgCap)),pgVal=CO.usePg?pgMax:0,pgUsed=Math.ceil(pgVal/PG_RATE);
   return{sub,fee,disc,pgMax,pgVal,pgUsed,total:sub+fee-disc-pgVal,eta:CO.mode==='pickup'?25+(CFG.busyExtra||0):di.eta}}
 function renderCheckout(){
