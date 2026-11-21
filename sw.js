@@ -2,7 +2,7 @@
    Pages and scripts: network first, so every deploy shows up immediately;
    the cached copy is only used when the phone is offline.
    Images and fonts: served from cache, refreshed in the background. */
-const VERSION = 'aq-v4';
+const VERSION = 'aq-v5';
 const SHELL = ['/', '/index.html', '/data.js', '/kids.js', '/manifest.json', '/assets/logo_circle.jpg', '/assets/icons/icon-192.png'];
 
 self.addEventListener('install', (e) => {

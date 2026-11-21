@@ -651,7 +651,7 @@ footer.site img{width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)}
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true"></aside>
 <div class="toast" id="toast"></div>
 
-<script src="data.js?v=11"></script>
+<script src="data.js?v=12"></script>
 <script src="kids.js?v=1"></script>
 <script>
 /* =========================================================
@@ -702,7 +702,7 @@ const cartCount=()=>S.cart.reduce((s,l)=>s+l.qty,0);
 const cartFeeds=()=>S.cart.reduce((s,l)=>s+feedsOf(BY[l.id],l.o)*l.qty,0);
 const fromPrice=item=>item.v?Math.min(...item.v.map(x=>x.p)):item.p;
 function optSummary(item,o){const p=[];const v=variant(item,o);if(v)p.push(L(v));if(o.s&&item.style)p.push(L(item.style.find(x=>x.k===o.s)));(o.add||[]).forEach(a=>p.push('+ '+L(ADD[a])));if(o.note)p.push('“'+o.note+'”');return p.join(' · ')}
-const pic=(item,cls='thumb')=>item.img?`<img class="${cls}" src="${item.img}" alt="${esc(item.ar+' — '+item.en)}">`:`<span class="${cls}">${item.em||'🍽️'}</span>`;
+const pic=(item,cls='thumb')=>item.img?`<img class="${cls}" src="${item.img}" loading="lazy" decoding="async" alt="${esc(item.ar+' — '+item.en)}">`:`<span class="${cls}">${item.em||'🍽️'}</span>`;
 const needsSheet=item=>item.v||item.style||(item.add&&item.add.length);
 
 function addToCart(id,o={},qty=1,fromEl){
