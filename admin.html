@@ -189,7 +189,7 @@ const ROLES={
   cs:{ar:'خدمة عملاء',ic:'🎧',nav:['dash','orders','tasks','customers','wa'],d:'يأكد الطلبات بالتليفون، يتابع العملاء، يوزّع الطيارين، ويلغي لو لازم'},
   kitchen:{ar:'مطبخ',ic:'👨‍🍳',nav:['orders'],d:'يشوف الطلبات المؤكدة بس ويحرّكها من «جديد» لحد «بيتغلف»'},
   rider:{ar:'طيار',ic:'🛵',nav:['orders'],d:'يشوف الطلبات اللي معاه بس، ويقفلها لما توصل'}};
-const OWNER={id:'owner',name:'المالك',role:'manager',color:'#5B2614'};
+const OWNER={id:'owner',name:'الإدارة',role:'manager',color:'#5B2614'};
 const COLORS=['#D3202A','#2E8FA3','#4E8A3A','#C98A55','#7A3B22','#8E44AD','#E67E22'];
 const normPhone=v=>{let d=String(v||'').replace(/[\u0660-\u0669]/g,c=>c.charCodeAt(0)-0x660).replace(/[\u06F0-\u06F9]/g,c=>c.charCodeAt(0)-0x6F0).replace(/\D/g,'');if(d.startsWith('0020'))d=d.slice(4);else if(d.startsWith('20')&&d.length===12)d=d.slice(2);if(d.length===10&&d[0]==='1')d='0'+d;return d};
 function seedTeam(){return[
@@ -216,10 +216,10 @@ function renderLogin(){
   let mode='staff';
   const draw=()=>{const staff=team().filter(m=>m.active);
   $('#root').innerHTML=`<div class="login"><div class="box"><img src="assets/logo_circle.jpg" style="width:90px;border-radius:50%;box-shadow:0 0 0 4px var(--sand)"><h1 style="font-size:32px;margin:10px 0 4px">لوحة تحكم أبو قورة</h1><p class="muted" style="margin:0 0 14px;font-size:13px">كل واحد في الفريق بيدخل بكوده</p>
-  <div class="seg" id="lm" style="margin-bottom:14px;display:flex"><button data-m="staff" class="${mode==='staff'?'on':''}" style="flex:1">👥 موظف</button><button data-m="owner" class="${mode==='owner'?'on':''}" style="flex:1">👑 المالك</button></div>
+  <div class="seg" id="lm" style="margin-bottom:14px;display:flex"><button data-m="staff" class="${mode==='staff'?'on':''}" style="flex:1">👥 موظف</button><button data-m="owner" class="${mode==='owner'?'on':''}" style="flex:1">👑 الإدارة</button></div>
   ${mode==='staff'?`<div class="f" style="text-align:start"><label>إنت مين؟</label><div class="chips" id="who" style="justify-content:center">${staff.map(m=>`<button class="chip" data-id="${m.id}" style="display:inline-flex;gap:6px;align-items:center">${avatar(m,20)} ${esc(m.name)} <span class="muted" style="font-size:11px">${ROLES[m.role].ar}</span></button>`).join('')||'<span class="muted">مفيش موظفين — ادخل كمالك وضيفهم</span>'}</div></div>
     <div class="f" style="text-align:start"><label>الكود (PIN)</label><input type="password" id="ap" inputmode="numeric" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:8px"></div>`
-   :`<div class="f" style="text-align:start"><label>كلمة سر المالك</label><input type="password" id="ap"></div>`}
+   :`<div class="f" style="text-align:start"><label>كلمة سر الإدارة</label><input type="password" id="ap"></div>`}
   <div id="ae" style="color:var(--red);font-size:13px;min-height:18px;font-weight:800"></div>
   <button class="btn btn-red" style="width:100%" id="ago">دخول</button></div></div>`;
   let pick=null;
